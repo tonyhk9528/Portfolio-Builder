@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" 
+        href="{{url_for('static',filename='css/style.css')}}">
+    <title>A Movies Library</title>
+</head>
+
+<body>
+    <div>
+        <ul id="menubar">
+            <li id="menudiv"><a href="{{url_for('hello_world')}}">Home</a></li>
+            <li id="menudiv"><a href="{{url_for('list_movies')}}">Movies</a></li>
+            <li id="menudiv"><a href="{{url_for('list_actors')}}">Actors</a></li>
+        </ul>
+    </div>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="footer">
+        Movie Library for the Course CMT210 - Fundamentals of Programming
+    </div>
+
+</body>
+
+</html>

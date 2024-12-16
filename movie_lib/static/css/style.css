@@ -1,0 +1,114 @@
+#menubar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+#footer{
+    font: 14px;
+    color: white;
+    background-color: #333;
+    margin: 0;
+    padding: 16px;
+}
+
+
+
+#menudiv {
+    float: left;
+}
+
+#menudiv a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#movie_info, #moviecontent{
+    font-size: 20px;
+}
+
+#movie_content{
+    width: 100%; 
+    overflow: hidden;
+    height: 320px;
+}
+
+#cover{
+    width: 270px;
+    padding: 10px;    
+    float: left;
+}
+#movie_info{
+    margin-left: 0px;
+}
+
+#list_content{
+    font-size: larger;
+}
+#login_info{
+    padding: 10px;
+    text-align: center;
+}
+
+input {
+    width: 250px;
+    padding: 20px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.subBt {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+th{
+    padding: 14px 16px;
+    background-color: black;
+    color: white;
+}
+
+.message{
+    padding: 10px; 
+    font-size: 40px;
+}
+
+.listItemClick {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    width: 250px;
+}
+
+
+.vertical-list {
+    width: 200px;
+}
+
+.vertical-list a {
+    background-color: #04AA6D;
+    text-align: left;
+    color: white;
+    display: block;
+    padding: 14px;
+    text-decoration: none;
+}
+
+.vertical-list a:hover {
+    background-color: #ccc;
+}

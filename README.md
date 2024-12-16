@@ -91,3 +91,31 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+
+### Install a virtual environment
+# On Windows:
+py -3 -m venv .venv
+
+# On MacOs/Linux:
+python3 –m venv .venv
+
+### Activate the environment (every startup)
+# On Windows:
+.venv\Scripts\activate
+
+# on MacOS/Linux:
+. .venv/bin/activate
+
+### With the virtual envirornment activated 
+
+# Install Flask
+pip install Flask
+
+# Install all dependencies
+pip install -r requirements.txt
+
+## Run your Flask application
+
+flask --app hello run --debug
+

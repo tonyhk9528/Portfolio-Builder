@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="movie_content">
+    <div id="cover">
+        <img src="{{url_for('static',filename='img/'+movie.cover_url)}}" alt="Cover" 
+        width="250" height="300">
+    </div>
+    <div id="movie_info" >
+        <ul>
+            <li> <strong> Title:</strong>  {{movie.title}} </li>
+            <li> <strong> Release Year: </strong> {{movie.release_year}} </li>
+            <li> <strong> Description: </strong> {{movie.description}}</li>
+            
+        </ul>
+
+        <b> Cast: </b>
+        <ul> 
+            
+            {% for actor in movie.actors  %}
+                <li> <a  href="{{url_for('actor_load',actorid=actor.id)}}">  {{actor.name}} </a> </li>
+            {% endfor %}            
+
+        </ul>
+    </div>
+    <div></div>
+</div>
+{% endblock content %}
