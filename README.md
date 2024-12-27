@@ -95,7 +95,7 @@ If you have run out of energy or time for your project, put a note at the top of
 
 ### Install a virtual environment
 # On Windows:
-py -3 -m venv .venv
+python -m venv .venv
 
 # On MacOs/Linux:
 python3 –m venv .venv
@@ -117,5 +117,16 @@ pip install -r requirements.txt
 
 ## Run your Flask application
 
-flask --app hello run --debug
+flask --app portfolio run --debug
+
+
+– Your git repository must include a README text file (.md or .txt), which
+contains the following information:
+∗ Your Username (or Student Number)
+∗ (If deployed on OpenShift) URL of your website on the OpenShift
+server;
+∗ [Optional] References (if appropriate).
+∗ [Optional] Any other information you think is relevant, e.g. how to run
+your code.
+
 

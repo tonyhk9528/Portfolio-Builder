@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<svg
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:ns1="http://sozi.baierouge.fr"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    id="Calque_1"
+    xml:space="preserve"
+    viewBox="0 0 64 64.000001"
+    version="1.1"
+    y="0px"
+    x="0px"
+    enable-background="new 0 0 267 315.637"
+  ><defs
+      id="defs35"
+    ><style
+        id="style4237"
+        type="text/css"
+      >
+    .str0 {stroke:#DA251D;stroke-width:0.0590021}
+    .fil0 {fill:#DA251D;fill-rule:nonzero}
+  </style
+    ></defs
+  >
+<g
+      id="g4341"
+    ><rect
+        id="rect4300"
+        transform="matrix(.99466 .10323 -.10584 .99438 0 0)"
+        height="55.736"
+        width="44.338"
+        y="2.8535"
+        x="11.261"
+        fill="#2ea99c"
+    /><rect
+        id="rect4302"
+        transform="matrix(.99865 .051990 -.052684 .99861 0 0)"
+        height="55.784"
+        width="44.121"
+        y="4.3725"
+        x="12.186"
+        fill="#f77462"
+    /><rect
+        id="rect2820"
+        height="56"
+        width="44"
+        y="6"
+        x="13"
+        fill="#f9d97b"
+    /><path
+        id="path4275-2"
+        d="m46.5 5.4184v-0.98361c0-1.9672-1-3.9344-3-3.9344s-3 1.9672-3 3.9344v8.8525c0 2.9508 4 2.9508 4 0v-9.8361m-6 0v1.9672"
+        stroke="#000"
+        stroke-linecap="square"
+        fill="none"
+    /><g
+        id="text4304"
+        fill="#9f482d"
+        transform="matrix(1.0011 0 0 1.0011 9.8098 -3.2407)"
+      ><path
+          id="path4309"
+          d="m33.34 33.996-0.51562 0.33984c-0.44532 0.28907-0.82813 0.57813-1.1484 0.86719-0.06251-0.28125-0.21876-0.73437-0.46875-1.3594l-0.258-0.668c-0.591-1.721-0.949-3.176-2.789-3.961 0.63281-0.57812 1.1875-0.86718 1.6641-0.86719 0.64062 0.00001 1.3476 0.8711 2.1211 2.6133l0.42188 0.9375c2.039-3.656 7.633-9.898 10.633-11.898-0.21405 0.48913 0.41276 0.58724 0 1-3.9466 3.7976-7.6021 7.8657-9.6602 12.996"
+          fill="#9f482d"
+      /></g
+    ><rect
+        id="rect4317"
+        fill-opacity=".43781"
+        height="5"
+        width="20"
+        y="24"
+        x="17"
+        fill="#9f482d"
+    /><rect
+        id="rect4321"
+        fill-opacity=".43781"
+        height="5"
+        width="20"
+        y="44"
+        x="17"
+        fill="#9f482d"
+    /></g
+  ><metadata
+    ><rdf:RDF
+      ><cc:Work
+        ><dc:format
+          >image/svg+xml</dc:format
+        ><dc:type
+            rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+        /><cc:license
+            rdf:resource="http://creativecommons.org/licenses/publicdomain/"
+        /><dc:publisher
+          ><cc:Agent
+              rdf:about="http://openclipart.org/"
+            ><dc:title
+              >Openclipart</dc:title
+            ></cc:Agent
+          ></dc:publisher
+        ><dc:title
+          >paper notes</dc:title
+        ><dc:date
+          >2013-08-28T21:14:38</dc:date
+        ><dc:description
+          >three note sheets fixed together</dc:description
+        ><dc:source
+          >https://openclipart.org/detail/182517/paper-notes-by-crisg-182517</dc:source
+        ><dc:creator
+          ><cc:Agent
+            ><dc:title
+              >crisg</dc:title
+            ></cc:Agent
+          ></dc:creator
+        ><dc:subject
+          ><rdf:Bag
+            ><rdf:li
+              >attach</rdf:li
+            ><rdf:li
+              >folder icon</rdf:li
+            ><rdf:li
+              >icon</rdf:li
+            ><rdf:li
+              >note</rdf:li
+            ><rdf:li
+              >notes</rdf:li
+            ><rdf:li
+              >office</rdf:li
+            ><rdf:li
+              >paper</rdf:li
+            ><rdf:li
+              >promemoria</rdf:li
+            ><rdf:li
+              >remember</rdf:li
+            ></rdf:Bag
+          ></dc:subject
+        ></cc:Work
+      ><cc:License
+          rdf:about="http://creativecommons.org/licenses/publicdomain/"
+        ><cc:permits
+            rdf:resource="http://creativecommons.org/ns#Reproduction"
+        /><cc:permits
+            rdf:resource="http://creativecommons.org/ns#Distribution"
+        /><cc:permits
+            rdf:resource="http://creativecommons.org/ns#DerivativeWorks"
+        /></cc:License
+      ></rdf:RDF
+    ></metadata
+  ></svg
+>

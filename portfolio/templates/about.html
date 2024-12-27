@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+
+
+<div class="container">
+
+
+    <div class="about-container">
+        <h1 class="h4 mb-2 fw-normal">About</h1>
+        <div class="about-p"><p>{{about|safe}}</p></div>
+    </div>
+
+    
+
+
+    <form  name="about" method="post">
+      <div class="form-group">
+        <label class="form-label">Update your "about" section below</label>
+        <div id="editor"></div>
+      </div>
+
+      <div class="about-btn">
+        <button class="btn btn-primary" type="submit">Confirm</button>
+        <button class="btn btn-secondary" type="button" id="resetForm">Reset</button>
+      </div>
+    </form>
+</div>
+  
+
+{% endblock content %}
