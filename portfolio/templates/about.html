@@ -13,20 +13,20 @@
     </div>
 
     
-
-
-    <form  name="about" method="post">
+    <form  id ="aboutform" method="POST" action="/about">
       <div class="form-group">
         <label class="form-label">Update your "about" section below</label>
-        <div id="editor"></div>
+        <div id="editor">{{ about|safe }}</div>
+        <input type="hidden" name="about" id="new_about_me">
       </div>
 
       <div class="about-btn">
         <button class="btn btn-primary" type="submit">Confirm</button>
-        <button class="btn btn-secondary" type="button" id="resetForm">Reset</button>
       </div>
     </form>
+
 </div>
   
+
 
 {% endblock content %}

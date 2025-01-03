@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center">
+        <h1 class="h4 mb-2 fw-normal">Edit experience</h1>
+    </div>
+    
+        
+        
+    <div class="container text-left form-container">
+        <p class="text-center">Edit your experience in the form below</p>
+        <form method="POST" class="row g-2">
+            <!-- Start date -->
+            <div class="mb-3 col-md-6">
+                <label for="start_date" class="form-label">Start date</label>
+                <input type="month" name="start_date" class="form-control"  value="{{user_experience.start_date}}" required>
+            </div>
+
+            <!-- End date -->
+            <div class="mb-3 col-md-6">
+                <label for="end_date" class="form-label">End date</label>
+                <input type="month" name="end_date" class="form-control" value="{{user_experience.end_date}}" required>
+                <input class="form-check-input" id="check-current" type="checkbox" >
+                <label class="form-check-label" for="check-current">
+                    I currently work here
+                </label>
+            
+            </div>
+
+            <!-- Employer -->
+            <div class="mb-3 col-md-6">
+                <label for="employer" class="form-label">Employer</label>
+                <input type="text" name="employer" class="form-control" placeholder="Google" value="{{user_experience.employer}}" required>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3 col-md-6">
+                <label for="role" class="form-label">Title / Role</label>
+                <input type="text" name="role" class="form-control" placeholder="Software engineer" value ="{{user_experience.role}}" required>
+                </select>
+            </div>
+            
+        
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="6" placeholder="A brief overview of your responsibilities and achievements during your time in this position." required>{{user_experience.description}}</textarea>
+            </div>
+
+            <!-- Tags -->
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags (Optional)</label>
+                <input type="text" id="exp-tags" name="exp-tag" class="form-control" placeholder="Python,SQL,R" value="{{user_experience.tags}}" aria-describedby="tagshelpblock">
+                <div id="tagshelpblock" class="form-text">
+                    Add tags under your experience following the format of the placeholder. You can add technologies and/ or skills used in the job.
+                </div>
+            </div>
+            
+
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Update experience</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

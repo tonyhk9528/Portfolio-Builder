@@ -1,12 +1,10 @@
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import render_template, redirect, url_for, request, flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
-from datetime import timedelta
+from werkzeug.utils import secure_filename
 from sqlalchemy import text
-import json
+from datetime import datetime
+import os
+
 
 from portfolio import app, db
 from portfolio.models import *
@@ -62,28 +60,19 @@ def register():
         user = db.engine.connect().execute(sql_id, {'username': username}).fetchone()
         user_id = user.id
 
-        #initialise about
+        #initialise About
         sql_about = "INSERT INTO about (user_id, about_me) VALUES (:user_id, :about_me)"
         db.session.execute(text(sql_about), {
             "user_id": user_id,                
             "about_me": "Write a couple-paragraphs-long summary about yourself. It can be about your upbring, passion, past experiences or even hobbies. This is your chance to give a good first impression and showcase your personality!",
             })
 
-        #initialise experience
-
-        #initialise education
-
-        #initialise skills
-
-        #initialise projects
-
-
-
         db.session.commit()
         flash("Account created successfully!")
         return redirect( url_for('login'))
 
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -170,8 +159,14 @@ def logout():
     flash("You have been logged out.")
     return redirect(url_for('login'))
 
+
+
 @app.route('/about', methods = ['GET', 'POST'])
 def about():
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+
     user_id = session["user_id"]
     username = session["username"]
     
@@ -180,10 +175,7 @@ def about():
     sql = text(sql)
     user_about = db.engine.connect().execute(sql, {'user_id': user_id}).fetchone()
 
-    if user_about:  
-        about = user_about.about_me
-    else:
-        about = ""
+    about = user_about.about_me
 
 
     if request.method == 'POST':
@@ -212,3 +204,560 @@ def about():
 
 
     return render_template("about.html", username=username, user_id=user_id, about=about)
+
+
+@app.route('/skills', methods = ['GET', 'POST'])
+def skills():
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+
+    user_id = session["user_id"]
+    username = session["username"]
+    icons = [
+        "Analytics", "Cloud", "Coding", "Communication", "CSS", "Database", 
+        "HTML", "JavaScript", "Leadership", "Project Management", "Public Speaking", 
+        "Sale", "Science", "Teamwork", "Translation", "Writing"
+    ]
+
+    if request.method == "POST":
+        skill_name = request.form.get("skill_name")
+        skill_content = request.form.get("skill_content")
+        skill_icon = request.form.get("skill_icon")
+
+        #validate skill_icon
+        if skill_icon not in icons:
+            return render_template("skills.html", icons=icons)
+
+        sql = """
+                INSERT INTO skills 
+                (skill_name, skill_content, skill_icon, user_id) 
+                VALUES 
+                (:skill_name, :skill_content, :skill_icon, :user_id)
+            """
+        sql_q = text(sql)
+
+        #Add skill
+        db.session.execute(
+            sql_q,
+            {
+            "skill_name": skill_name,
+            "skill_content": skill_content,
+            "skill_icon": skill_icon,
+            "user_id": user_id
+                }
+        )
+
+        db.session.commit()
+        return redirect(url_for('skills'))
+
+
+    sql = "SELECT * FROM skills WHERE user_id = :user_id"
+    sql = text(sql)
+    user_skills = db.engine.connect().execute(sql, {'user_id': user_id}).fetchall()
+
+    return render_template("skills.html", username=username, icons=icons, user_skills=user_skills)
+
+
+@app.route('/skills/edit/<int:id>', methods = ['GET', 'POST'])
+def edit_skill(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+    icons = [
+        "Analytics", "Cloud", "Coding", "Communication", "CSS", "Database", 
+        "HTML", "JavaScript", "Leadership", "Project Management", "Public Speaking", 
+        "Sale", "Science", "Teamwork", "Translation", "Writing"
+    ]
+
+    #validate ownership
+    sql_validate = "SELECT user_id FROM skills WHERE skill_id = :skill_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('skills'))
+
+
+    if request.method == 'POST':
+        new_skill_name = request.form.get('skill_name')
+        new_skill_icon = request.form.get('skill_icon')
+        new_skill_content = request.form.get('skill_content')
+        
+
+        sql = """
+                UPDATE skills 
+                SET  
+                skill_name= :skill_name, skill_icon = :skill_icon, skill_content = :skill_content
+                WHERE user_id = :user_id AND skill_id = :skill_id
+            """
+        sql_q = text(sql)
+
+        #Update skill
+        db.session.execute(
+            sql_q,
+            {
+            "skill_name": new_skill_name,
+            "skill_icon": new_skill_icon,
+            "skill_content": new_skill_content,
+            "user_id": user_id,
+            "skill_id": id
+                }
+        )
+        db.session.commit()
+        flash("Skill updated successfully!")
+        return redirect( url_for('skills'))
+
+
+    #Query for current skill
+    sql = "SELECT * FROM skills WHERE user_id = :user_id AND skill_id = :skill_id"
+    sql_q = text(sql)
+    user_skill = db.engine.connect().execute(sql_q, {'user_id':user_id, 'skill_id':id}).fetchone()
+
+    
+    return render_template("edit_skill.html", user_skill=user_skill, icons=icons)
+
+
+
+@app.route('/skills/delete/<int:id>')
+def delete_skill(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+
+    #validate ownership
+    sql_validate = "SELECT user_id FROM skills WHERE skill_id = :skill_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('skills'))
+
+
+    #Delete skill
+    sql = """
+            DELETE FROM skills 
+            WHERE user_id = :user_id AND skill_id = :skill_id
+        """
+    sql_q = text(sql)
+
+    
+    db.session.execute(
+        sql_q,
+        {
+        "user_id": user_id,
+        "skill_id": id
+            }
+    )
+
+    db.session.commit()
+    return redirect(url_for('skills'))
+
+
+@app.route('/experience', methods = ['GET', 'POST'])
+def experience():
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+
+    user_id = session["user_id"]
+    username = session["username"]
+
+    if request.method == "POST":
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        employer = request.form.get('employer')
+        role = request.form.get('role')
+        description = request.form.get('description')
+        tags = request.form.get('exp-tag')
+
+        sql = """
+                INSERT INTO experience 
+                (user_id, start_date, end_date, employer, role, description, tags) 
+                VALUES 
+                (:user_id, :start_date, :end_date, :employer, :role, :description, :tags)
+            """
+        sql_q = text(sql)
+
+        #Add experience
+        db.session.execute(
+            sql_q,
+            {
+            "user_id": user_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "employer": employer,
+            "role": role,
+            "description": description,
+            "tags": tags
+                }
+        )
+
+        db.session.commit()
+        return redirect(url_for('experience'))
+
+
+    sql = "SELECT * FROM experience WHERE user_id = :user_id"
+    sql = text(sql)
+    result = db.engine.connect().execute(sql, {'user_id': user_id}).fetchall()
+
+    if result:
+        user_experience_list = [
+            {
+                "experience_id": row.experience_id,
+                "start_date": row.start_date,
+                "end_date": row.end_date,
+                "employer": row.employer,
+                "role": row.role,
+                "description": row.description,
+                "tags": row.tags.split(',') if row.tags else [],
+                "start_date_formatted": datetime.strptime(row.start_date, "%Y-%m").strftime("%b-%Y").upper(),
+                "end_date_formatted": datetime.strptime(row.end_date, "%Y-%m").strftime("%b-%Y").upper() if row.end_date != 'CURRENT' else row.end_date,
+            }
+            for row in result
+        ]    
+    else:
+        user_experience_list = None
+
+    return render_template("experience.html", username=username, user_experience_list=user_experience_list)
+
+
+
+
+@app.route('/experience/edit/<int:id>', methods = ['GET', 'POST'])
+def edit_experience(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+
+    #validate ownership
+    sql_validate = "SELECT user_id FROM experience WHERE experience_id = :experience_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('experience'))
+
+
+    if request.method == 'POST':
+        new_start_date = request.form.get('start_date')
+        new_end_date = request.form.get('end_date')
+        new_employer = request.form.get('employer')
+        new_role = request.form.get('role')
+        new_description = request.form.get('description')
+        new_tags = request.form.get('exp-tag')
+        
+
+        sql = """
+                UPDATE experience 
+                SET  
+                start_date= :start_date, end_date = :end_date, employer = :employer, role = :role, description = :description, tags = :tags
+                WHERE user_id = :user_id AND experience_id = :experience_id
+            """
+        sql_q = text(sql)
+
+        #Update experience
+        db.session.execute(
+            sql_q,
+            {
+            "start_date": new_start_date,
+            "end_date": new_end_date,
+            "employer": new_employer,
+            "role": new_role,
+            "description": new_description,
+            "tags": new_tags,
+            "user_id": user_id,
+            "experience_id": id
+                }
+        )
+        db.session.commit()
+        flash("Experience updated successfully!")
+        return redirect( url_for('experience'))
+
+
+    #Query for current experience
+    sql = "SELECT * FROM experience WHERE user_id = :user_id AND experience_id = :experience_id"
+    sql_q = text(sql)
+    user_experience = db.engine.connect().execute(sql_q, {'user_id':user_id, 'experience_id':id}).fetchone()
+
+    
+    return render_template("edit_experience.html", user_experience=user_experience)
+
+
+@app.route('/experience/delete/<int:id>')
+def delete_experience(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+
+    #validate ownership
+    sql_validate = "SELECT user_id FROM experience WHERE experience_id = :experience_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('experience'))
+
+
+    #Delete skill
+    sql = """
+            DELETE FROM experience 
+            WHERE user_id = :user_id AND experience_id = :experience_id
+        """
+    sql_q = text(sql)
+
+    
+    db.session.execute(
+        sql_q,
+        {
+        "user_id": user_id,
+        "experience_id": id
+            }
+    )
+
+    db.session.commit()
+    return redirect(url_for('experience'))
+
+
+@app.route('/projects', methods = ['GET', 'POST'])
+def projects():
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+
+    user_id = session["user_id"]
+    username = session["username"]
+
+    if request.method == "POST":
+        project_name = request.form.get("project-name")
+        project_description = request.form.get("project-description")
+        project_screenshot = request.files.get("project-screenshot")
+        project_url = request.form.get("project-url")
+        project_tags = request.form.get("project-tags")
+        project_order = request.form.get("project-order")
+
+        if project_screenshot:
+            #Save file
+            project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', secure_filename(project_screenshot.filename)))
+
+            #Get file name
+            project_screenshot_filename = project_screenshot.filename
+        else:
+            project_screenshot_filename = "project-placeholder.jpg"
+
+        #Order handle
+        project_order = int(project_order) if project_order and project_order.isdigit() and int(project_order) > 0 else 1
+
+        #Add project
+        sql = """
+                INSERT INTO projects 
+                (user_id, project_name, project_description, project_screenshot, project_url, tags, sort_order) 
+                VALUES 
+                (:user_id, :project_name, :project_description, :project_screenshot, :project_url, :tags, :sort_order)
+            """
+        sql_q = text(sql)
+
+        db.session.execute(
+            sql_q,
+            {
+            "user_id": user_id,
+            "project_name": project_name,
+            "project_description": project_description,
+            "project_screenshot": project_screenshot_filename,
+            "project_url": project_url,
+            "tags": project_tags,
+            "sort_order": project_order
+                }
+        )
+
+        db.session.commit()
+        return redirect(url_for('projects'))
+
+
+
+    sql = "SELECT * FROM projects WHERE user_id = :user_id ORDER BY sort_order, project_id"
+    sql_q = text(sql)
+    user_projects = db.engine.connect().execute(sql_q, {'user_id': user_id}).fetchall()
+
+    
+
+    return render_template("projects.html", username=username, user_projects=user_projects)
+
+
+@app.route('/projects/edit/<int:id>', methods = ['GET', 'POST'])
+def edit_project(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+
+    #validate ownership
+    sql_validate = "SELECT user_id, project_screenshot FROM projects WHERE project_id = :project_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('projects'))
+    project_screenshot = result.project_screenshot
+
+
+    if request.method == 'POST':
+        new_project_name = request.form.get("project-name")
+        new_project_description = request.form.get("project-description")
+        new_project_screenshot = request.files.get("project-screenshot")
+        new_project_url = request.form.get("project-url")
+        new_project_tags = request.form.get("project-tags")
+        new_project_order = request.form.get("project-order")
+
+        if new_project_screenshot:
+            #Save file
+            new_project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', secure_filename(new_project_screenshot.filename)))
+
+            #Get file name
+            new_project_screenshot_filename = new_project_screenshot.filename
+        else:
+            new_project_screenshot_filename = project_screenshot
+
+        #Order handle
+        new_project_order = int(new_project_order) if new_project_order and new_project_order.isdigit() and int(new_project_order) > 0 else 1
+
+        
+
+        sql = """
+                UPDATE projects 
+                SET  
+                project_name= :project_name, project_description = :project_description, project_screenshot = :project_screenshot, project_url = :project_url, tags = :tags, sort_order = :sort_order
+                WHERE user_id = :user_id AND project_id = :project_id
+            """
+        sql_q = text(sql)
+
+        #Update experience
+        db.session.execute(
+            sql_q,
+            {
+            "project_name": new_project_name,
+            "project_description": new_project_description,
+            "project_screenshot": new_project_screenshot_filename,
+            "project_url": new_project_url,
+            "tags": new_project_tags,
+            "sort_order": new_project_order ,
+            "user_id": user_id,
+            "project_id": id
+                }
+        )
+        db.session.commit()
+        flash("Project updated successfully!")
+        return redirect( url_for('projects'))
+
+
+    #Query for current experience
+    sql = "SELECT * FROM projects WHERE user_id = :user_id AND project_id = :project_id"
+    sql_q = text(sql)
+    user_project = db.engine.connect().execute(sql_q, {'user_id':user_id, 'project_id':id}).fetchone()
+
+    
+    return render_template("edit_project.html", user_project=user_project)
+
+@app.route('/projects/delete/<int:id>')
+def delete_project(id):
+    if not session["user_id"]:
+        flash("Please login first")
+        return redirect(url_for('login'))
+    
+    user_id = session["user_id"]
+    username = session["username"]
+
+    #validate ownership
+    sql_validate = "SELECT user_id FROM projects WHERE project_id = :project_id"
+    sql_validate_q = text(sql_validate)
+    result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
+    if result.user_id != user_id:
+        return redirect(url_for('projects'))
+
+
+    #Delete skill
+    sql = """
+            DELETE FROM projects 
+            WHERE user_id = :user_id AND project_id = :project_id
+        """
+    sql_q = text(sql)
+
+    
+    db.session.execute(
+        sql_q,
+        {
+        "user_id": user_id,
+        "project_id": id
+            }
+    )
+
+    db.session.commit()
+    return redirect(url_for('projects'))
+
+
+@app.route('/portfolio/<username>')
+def portfolio(username):
+
+    #Get user's info and about
+    sql = "SELECT * FROM users JOIN about ON users.id = about.user_id WHERE users.username = :username"
+    sql_q = text(sql)
+    with db.engine.connect() as connection:
+        user = connection.execute(sql_q, {'username': username}).fetchone()
+
+    if not user:
+        abort(404, description="User not found")
+
+    user_id = user.id
+
+    #Get skills
+    sql = "SELECT * FROM skills WHERE user_id = :user_id"
+    sql_q = text(sql)
+    with db.engine.connect() as connection:
+        user_skills = connection.execute(sql_q, {'user_id': user_id}).fetchall()
+
+
+    #Get experience
+    sql = "SELECT * FROM experience WHERE user_id = :user_id"
+    sql_q = text(sql)
+    with db.engine.connect() as connection:
+        result = connection.execute(sql_q, {'user_id': user_id}).fetchall()
+
+    if result:
+        user_experience_list = [
+            {
+                "experience_id": row.experience_id,
+                "start_date": row.start_date,
+                "end_date": row.end_date,
+                "employer": row.employer,
+                "role": row.role,
+                "description": row.description,
+                "tags": row.tags.split(',') if row.tags else [],
+                "start_date_formatted": datetime.strptime(row.start_date, "%Y-%m").strftime("%b-%Y").upper(),
+                "end_date_formatted": datetime.strptime(row.end_date, "%Y-%m").strftime("%b-%Y").upper() if row.end_date != 'CURRENT' else row.end_date,
+            }
+            for row in result
+        ]    
+    else:
+        user_experience_list = None
+
+
+
+
+    #Get projects
+    sql = "SELECT * FROM projects WHERE user_id = :user_id ORDER BY sort_order, project_id"
+    sql_q = text(sql)
+    with db.engine.connect() as connection:
+        user_projects = connection.execute(sql_q, {'user_id': user_id}).fetchall()
+
+
+
+    return render_template('portfolio.html', user=user, user_skills=user_skills, user_experience_list=user_experience_list, user_projects=user_projects)

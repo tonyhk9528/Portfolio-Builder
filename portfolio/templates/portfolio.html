@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CMT120 Coursework">
+  <link rel="icon" href="{{url_for('static',filename='img/resume_icon.png')}}">
+
+  <title>Portfolio Builder</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <!--Quill.js-->
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+
+
+
+  <!-- My CSS and Script-->
+  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}">
+  <script src="{{url_for('static',filename='js/script.js')}}"></script>
+
+  
+</head>
+
+<body>
+    <div class="port-container container-xxl d-flex flex-row">
+        <!-- Header -->
+        <div class="col-4">
+            <header class="port-user-info p-3">
+                <div class="port-intro">
+                    <h1 class="port-name text-white">{{user.first_name}} {{user.last_name}}</h1>
+                    <h5 class="port-role text-white">{{user.role}}</h5>
+                    <p class="lead port-headline">
+                        {{user.headline}}
+                    </p>
+                </div>
+
+                <nav>
+                    <ul class="nav col-12 col-lg-auto me-lg-auto justify-content-center mb-md-0 d-flex flex-column mb-3">
+                        <li><a href="#" class="nav-link px-2 port-nav-link">— About</a></li>
+                        <li><a href="#" class="nav-link px-2 port-nav-link">— Skills</a></li>
+                        <li><a href="#" class="nav-link px-2 port-nav-link">— Experience</a></li>
+                        <li><a href="#" class="nav-link px-2 port-nav-link">— Projects</a></li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    
+
+        <main class="col-8 port-main">
+            <div class="row g-2">
+                <div class="port-about text-white">
+                    {{user.about_me|safe}}
+                </div>
+
+            {% if user_skills%}
+                <div class="userskills row g-2 text-center port-skills">
+                        {% for row in user_skills%}
+                            <div class="col-4 skill-container">
+                                <img class="skill-icon" src="{{url_for('static', filename='img/' + row.skill_icon + '.png')}}">
+                                <p class="skill-name">{{row.skill_name}}</p>
+                                <p class="skill-content">{{row.skill_content}}</p>
+                            </div>
+                        {% endfor %}
+                </div>
+            {% endif %}
+
+            {%  if user_experience_list %}
+
+            <div class="exp-container port-exp">
+                {% for row in user_experience_list %}
+                <div class="row text-left">
+                    <div class="col-3 date-container text-left"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                    <div class="col-9 exp-heading text-left  ">
+                        <div class="exp-employer"><h5>{{row['employer']}}</h5></div>
+                        <div class="exp-role"><h6>{{row['role']}}</h6></div>  
+                        <div class="exp-description"><p>{{row['description']}}</p> </div>
+                        
+                        <div class="exp-tags">
+                            {% for tag in row.tags %}
+                                <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                            {% endfor %}
+                        </div>
+
+    
+                    </div>
+                        
+                </div>
+                
+
+                <hr>
+                {% endfor %}
+            </div>
+            
+            {% endif %}
+
+            {% if user_projects%}
+            {% for project in user_projects %}
+                <div class="project-container">
+                        <div class="row text-left">
+                            <div class="col-3 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
+
+                            <div class="col-9 proj-content text-left  ">
+                                <div class="proj-name"><a class="project-link" href="{{project.project_url}}"><h5>{{project.project_name}}</h5></a></div>
+                                <div class="proj-description"> <p>{{project.project_description}}</p> </div>
+                                
+                                {% if project.tags %}
+                                    <div class="exp-tags">
+                                    {% set tags = project.tags.split(',') %}
+                                    {% for tag in tags%}
+                                        <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                                    {% endfor %}
+                                    </div>
+                                {% endif %}
+
+            
+                            </div>
+                                
+                        </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+
+
+
+            </div>
+
+            
+
+        </main>
+
+
+    </div>
+
+    <!--Footer-->
+    <footer class="py-3 my-4">
+        <p class="text-center text-body-secondary">Powered by Portfolio Builder</p>
+    </footer>
+        
+</body>
+
+</html>

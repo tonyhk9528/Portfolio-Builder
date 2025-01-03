@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center skills-container">
+        <h1 class="h4 mb-2 fw-normal">Skills</h1>
+        <div class="container text-center px-3 gy-3">
+            
+            {% if user_skills%}
+            <div class="row g-2">
+                {% for row in user_skills%}
+                    <div class="col-4 skill-container position-relative">
+                        <div class="position-absolute top-0 end-0">
+                            <a href="{{url_for('edit_skill', id=row.skill_id)}}"><span class="edit-delete">Edit</span></a>
+                            <a href="{{url_for('delete_skill', id=row.skill_id)}}"><span class="edit-delete">Delete</span></a>
+                        </div>
+                        <img class="skill-icon" src="{{url_for('static', filename='img/' + row.skill_icon + '.png')}}">
+                        <p class="skill-name">{{row.skill_name}}</p>
+                        <p class="skill-content">{{row.skill_content}}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+                
+              
+        </div>
+    </div>
+    
+        
+        
+    <div class="container text-left form-container">
+        <p class="text-center">Add a new skill in the form below.</p>
+        <form action="/skills" method="POST" class="row g-2">
+            <!-- Skill name -->
+            <div class="mb-3 col-md-6">
+                <label for="skill_name" class="form-label">Skill name</label>
+                <input type="text" name="skill_name" class="form-control" placeholder="Python" required>
+            </div>
+
+            <!-- Skill icon -->
+            <div class="mb-3 col-md-6">
+                <label for="skill_icon" class="form-label">Icon</label>
+                <select type="text" name="skill_icon" class="form-select" required>
+                    <option disabled selected="">Select an icon</option>
+                    {% for icon in icons %}
+                        <option>{{icon}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <!-- Skill content -->
+            <div class="mb-3">
+                <label for="skill_content" class="form-label">Description</label>
+                <textarea id="skill_content" name="skill_content" class="form-control" rows="3" placeholder="Gained competency in Python through online courses, Leetcode challenges, and modules in MSc." required></textarea>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Add skill</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

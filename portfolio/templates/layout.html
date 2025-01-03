@@ -23,12 +23,13 @@
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
 
+
+
   <!-- My CSS and Script-->
   <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}">
   <script src="{{url_for('static',filename='js/script.js')}}"></script>
 
   
-
 </head>
 
 <body>
@@ -42,10 +43,9 @@
     
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
               <li><a href="{{url_for('about')}}" class="nav-link px-2 text-white">About</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Experience</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Education</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Skills</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Projects</a></li>
+              <li><a href="{{url_for('skills')}}" class="nav-link px-2 text-white">Skills</a></li>
+              <li><a href="{{url_for('experience')}}" class="nav-link px-2 text-white">Experience</a></li>
+              <li><a href="{{url_for('projects')}}" class="nav-link px-2 text-white">Projects</a></li>
               <li><a href="#" class="nav-link px-2 text-white">Your Portfolio</a></li>
             </ul>
         

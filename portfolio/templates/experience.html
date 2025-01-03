@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+    <div class="experience-container">
+        <h1 class="h4 mb-2 fw-normal text-center">Experience</h1>
+        <div class="container text-left px-3 gy-3">
+
+            {%  if user_experience_list %}
+            
+            <div class="exp-container">
+                {% for row in user_experience_list %}
+                <div class="row text-left position-relative">
+                    <div class="col-3 date-container text-left"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                    <div class="col-9 exp-heading text-left  ">
+                        <div class="exp-employer"><h5>{{row['employer']}}</h5></div>
+                        <div class="exp-role"><h6>{{row['role']}}</h6></div>  
+                        <div class="exp-description"><p>{{row['description']}}</p> </div>
+                        
+                        <div class="exp-tags">
+                            {% for tag in row.tags %}
+                                <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                            {% endfor %}
+                        </div>
+
+                        <div class="position-absolute top-0 end-0">
+                            <a href="{{url_for('edit_experience', id=row.experience_id)}}"><span class="edit-delete">Edit</span></a>
+                            <a href="{{url_for('delete_experience', id=row.experience_id)}}"><span class="edit-delete">Delete</span></a>
+                        </div>
+    
+                    </div>
+                        
+                </div>
+                
+
+                <hr>
+                {% endfor %}
+            </div>
+            
+            {% endif %}
+
+        </div>
+    </div>
+    
+        
+        
+    <div class="container text-left form-container">
+        <p class="text-center">Add your experience below. List your most relevant experience first.</p>
+        <form action="/experience" method="POST" class="row g-2">
+            <!-- Start date -->
+            <div class="mb-3 col-md-6">
+                <label for="start_date" class="form-label">Start date</label>
+                <input type="month" name="start_date" class="form-control"  required>
+            </div>
+
+            <!-- End date -->
+            <div class="mb-3 col-md-6">
+                <label for="end_date" class="form-label">End date</label>
+                <input type="month" name="end_date" class="form-control"  required>
+                <input class="form-check-input" id="check-current" type="checkbox" value="">
+                <label class="form-check-label" for="check-current">
+                    I currently work here
+                </label>
+            
+            </div>
+
+            <!-- Employer -->
+            <div class="mb-3 col-md-6">
+                <label for="employer" class="form-label">Employer</label>
+                <input type="text" name="employer" class="form-control" placeholder="Google" required>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3 col-md-6">
+                <label for="role" class="form-label">Title / Role</label>
+                <input type="text" name="role" class="form-control" placeholder="Software engineer" required>
+                </select>
+            </div>
+            
+        
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="6" placeholder="A brief overview of your responsibilities and achievements during your time in this position." required></textarea>
+            </div>
+
+            <!-- Tags -->
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags (Optional)</label>
+                <input type="text" id="exp-tags" name="exp-tag" class="form-control" placeholder="Python,SQL,R" aria-describedby="tagshelpblock">
+                <div id="tagshelpblock" class="form-text">
+                    Add tags under your experience following the format of the placeholder. You can add technologies and/ or skills used in the job.
+                </div>
+            </div>
+            
+
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Add experience</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

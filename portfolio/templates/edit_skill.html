@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center">
+        <h1 class="h4 mb-2 fw-normal">Edit skill</h1>
+    </div>
+    
+        
+        
+    <div class="container text-left form-container">
+        <p class="text-center">Edit your skill in the form below.</p>
+        <form  method="POST" class="row g-2">
+            <!-- Skill name -->
+            <div class="mb-3 col-md-6">
+                <label for="skill_name" class="form-label">Skill name</label>
+                <input type="text" name="skill_name" class="form-control" placeholder="Python" value="{{user_skill.skill_name}}" required>
+            </div>
+
+            <!-- Skill icon -->
+            <div class="mb-3 col-md-6">
+                <label for="skill_icon" class="form-label">Icon</label>
+                <select type="text" name="skill_icon" class="form-select" value="{{user_skill.skill_icon}}" required>
+                    <option disabled>Select an icon</option>
+                    {% for icon in icons %}
+                        {% if icon == user_skill.skill_icon %}
+                            <option selected>{{icon}}</option>
+                        {% else %}
+                            <option>{{icon}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <!-- Skill content -->
+            <div class="mb-3">
+                <label for="skill_content" class="form-label">Description</label>
+                <textarea id="skill_content" name="skill_content" class="form-control" placeholder="Gained competency in Python through online courses, Leetcode challenges, and modules in MSc." required>{{user_skill.skill_content}}</textarea>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Update skill</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center">
+        <h1 class="h4 mb-2 fw-normal">Edit project</h1>
+    </div>
+
+                
+    <div class="container text-left form-container">
+        <p class="text-center">Edit your project in the form below.</p>
+        <form  method="POST" class="row g-2" enctype="multipart/form-data">
+            <!-- Project name -->
+            <div class="mb-3 col-md-12">
+                <label for="project-name" class="form-label">Project name</label>
+                <input type="text" name="project-name" class="form-control"  placeholder="Portfolio Builder" value="{{user_project.project_name}}" required>
+            </div>
+            
+            <!-- Project description -->
+            <div class="mb-3 col-md-12">
+                <label for="project-description" class="form-label">Description</label>
+                <textarea id="project-description" name="project-description" class="form-control" rows="6" placeholder="A brief overview of your project." required>{{user_project.project_description}}</textarea>
+            </div>
+
+            <!-- Project screenshot -->
+            <div class="mb-3 col-md-12">
+                <label for="project-screenshot" class="form-label">Screenshot (Optional)</label>
+                <input type="file" name="project-screenshot" class="form-control"  accept=".png, .jpg, .jpeg" aria-describedby="screenshothelpblock">
+                <div id="screenshothelpblock" class="form-text">
+                    Upload a screenshot for your project. Default image will be used if no image is uploaded.
+                </div>
+
+            </div>
+
+            <!-- Project URL -->
+            <div class="mb-3 col-md-12">
+                <label for="project-url" class="form-label">Project URL (Optional)</label>
+                <input type="text" name="project-url" class="form-control" placeholder="https://yourawesomeproject.com/" aria-describedby="project-urlhelpblock" value="{{user_project.project_url}}">
+                <div id="project-urlhelpblock" class="form-text">
+                    Provide a link for viewers to see your project.
+                </div>
+            </div>
+
+            
+            <!-- Tags -->
+            <div class="mb-3 col-md-12">
+                <label for="project-tags" class="form-label">Tags (Optional)</label>
+                <input type="text" id="project-tags" name="project-tags" class="form-control" placeholder="HTML,CSS,JavaScript" aria-describedby="tagshelpblock" value="{{user_project.tags}}">
+                <div id="tagshelpblock" class="form-text">
+                    Add tags under your project following the format of the placeholder. You can add technologies and/ or skills used in the project.
+                </div>
+            </div>
+
+            <!-- Display order -->
+            <div class="mb-3 col-md-12">
+                <label for="project-order" class="form-label">Display order (Optional)</label>
+                <input type="number" min="1" name="project-order" class="form-control"  placeholder="1" aria-describedby="orderhelpblock" value="{{user_project.sort_order}}">
+                <div id="orderhelpblock" class="form-text">
+                    Assign a number to display your projects in ascending order.
+                </div>
+            </div>
+            
+            
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Update project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
