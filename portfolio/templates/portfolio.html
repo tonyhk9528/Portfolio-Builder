@@ -34,7 +34,7 @@
 <body>
     <div class="port-container container-xxl d-flex flex-row">
         <!-- Header -->
-        <div class="col-4">
+        <div class="col-4 sticky-header">
             <header class="port-user-info p-3">
                 <div class="port-intro">
                     <h1 class="port-name text-white">{{user.first_name}} {{user.last_name}}</h1>
@@ -58,7 +58,7 @@
 
         <main class="col-8 port-main">
             <div class="row g-2">
-                <div class="port-about text-white">
+                <div class="port-about text-light">
                     {{user.about_me|safe}}
                 </div>
 
@@ -78,16 +78,16 @@
 
             <div class="exp-container port-exp">
                 {% for row in user_experience_list %}
-                <div class="row text-left">
-                    <div class="col-3 date-container text-left"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
-                    <div class="col-9 exp-heading text-left  ">
-                        <div class="exp-employer"><h5>{{row['employer']}}</h5></div>
-                        <div class="exp-role"><h6>{{row['role']}}</h6></div>  
-                        <div class="exp-description"><p>{{row['description']}}</p> </div>
+                <div class="row text-left experience-container">
+                    <div class="col-3 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                    <div class="col-9 exp-heading text-left ">
+                        <div class="exp-employer text-light"><h5>{{row['employer']}}</h5></div>
+                        <div class="exp-role text-secondary"><h6>{{row['role']}}</h6></div>  
+                        <div class="exp-description"><p style="color: #EEEE;">{{row['description']}}</p> </div>
                         
                         <div class="exp-tags">
                             {% for tag in row.tags %}
-                                <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                                <button type="button" class="btn btn-outline-info tag">{{tag}}</button>
                             {% endfor %}
                         </div>
 
@@ -107,17 +107,17 @@
             {% for project in user_projects %}
                 <div class="project-container">
                         <div class="row text-left">
-                            <div class="col-3 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
+                            <div class="col-4 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
 
-                            <div class="col-9 proj-content text-left  ">
-                                <div class="proj-name"><a class="project-link" href="{{project.project_url}}"><h5>{{project.project_name}}</h5></a></div>
-                                <div class="proj-description"> <p>{{project.project_description}}</p> </div>
+                            <div class="col-8 proj-content text-left">
+                                <div class="proj-name text-light"><a class="project-link" href="{{project.project_url}}"><h5>{{project.project_name}}</h5></a></div>
+                                <div class="proj-description"> <p style="color: #EEEE;">{{project.project_description}}</p> </div>
                                 
                                 {% if project.tags %}
                                     <div class="exp-tags">
                                     {% set tags = project.tags.split(',') %}
                                     {% for tag in tags%}
-                                        <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                                        <button type="button" class="btn btn-outline-info tag">{{tag}}</button>
                                     {% endfor %}
                                     </div>
                                 {% endif %}

@@ -105,8 +105,13 @@ main {
   max-width: 275px;
   padding: 5px;
   margin: 12px auto;
-  background-color: white;
+  background-color: #222831;
 }
+
+.skill-container:hover{
+  background-color: #2A3139;
+}
+
 
 .skill-icon{
   max-width: 100px;
@@ -115,11 +120,13 @@ main {
 .skill-name{
   font-weight: bold;
   font-size: large;
+  color: #00ADB5;
 }
 
 .skill-content{
   font-size: small;
   margin: 5px auto;
+  color: #EEEEEE;
 }
 
 .edit-delete{
@@ -127,19 +134,32 @@ main {
   padding:3px;
 }
 
-.experience-container{
-  max-width: 900px;
-  padding: 10px;
-  margin: 16px auto;
-}
 
 .exp-container{
-  max-width: 800px;
+  max-width: 750px;
   padding: 25px;
   margin: 16px auto;
-  background-color: white;
+  background-color: #222831;
   border-radius: 10px;
 }
+
+.experience-container:hover{
+  background-color: #2A3139;
+}
+
+.exp-date{
+  font-size: smaller;
+}
+
+.exp-description{
+  color: #EEEEEE;
+}
+
+.exp-tags{
+  border: 3px;
+  margin-bottom: 3px;
+}
+
 
 .form-check-label{
   font-size: smaller;
@@ -150,18 +170,35 @@ main {
 }
 
 .proj-img{
-  width: 185px;
+  width: 220px;
   max-height: 185px;
   
 }
 
 .project-container{
-  max-width: 800px;
+  max-width: 750px;
   padding: 25px;
   margin: 16px auto;
-  background-color: white;
+  background-color: #222831;
   border-radius: 10px;
 }
+
+.project-container:hover{
+  background-color: #2A3139;
+}
+
+
+.project-link{
+  color:white;
+  text-decoration: none;
+
+}
+
+.project-link:hover{
+  color:#00ADB5;
+  text-decoration: underline;
+}
+
 
 .proj-content{
   padding-left: 25px;
@@ -169,15 +206,19 @@ main {
 }
 
 
+
 .port-container{
   padding-left: 48px;
   padding-right: 48px;
+  background-color: #222831;
 }
+
 
 .port-user-info{
   background-color: #222831;
   position: sticky;
   top: 0;
+  height: 100vh;
 }
 
 .port-name{
@@ -195,6 +236,8 @@ main {
 
 .port-role{
 }
+
+
 
 .port-nav-link{
   color:#94A3B8;
