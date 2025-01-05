@@ -43,4 +43,29 @@ document.addEventListener("DOMContentLoaded", () =>{
   });
 });
 
+// Portfolio scroll
+document.addEventListener("DOMContentLoaded", () => {
+
+  const navLinks = document.querySelectorAll('.port-nav-link');  
+  const sections = document.querySelectorAll('section');
+
+  let currentSection = 'about';
+
+  window.addEventListener('scroll', () => {
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 80) { 
+        currentSection = section.id;
+      }
+    });
+
+    navLinks.forEach(navLink => {
+      if (navLink.href.includes(currentSection)) {
+        navLink.classList.add('active');
+      } else {
+        navLink.classList.remove('active');
+      }
+    });
+  });
+
+});
 

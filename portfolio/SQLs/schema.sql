@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXiSTS"users"(
     "last_name" TEXT NOT NULL,
     "email" TEXT NOT NULL UNIQUE,
     "role" TEXT NOT NULL,
-    "headline" TEXT NOT NULL
+    "headline" TEXT NOT NULL,
+    "profile_pic" TEXT,
+    "resume" TEXT,
+    "linkedin" TEXT,
+    "github" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "about"(

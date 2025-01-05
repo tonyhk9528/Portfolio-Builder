@@ -11,12 +11,12 @@
             
             <div class="exp-container">
                 {% for row in user_experience_list %}
-                <div class="row text-left position-relative">
-                    <div class="col-3 date-container text-left"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                <div class="row text-left position-relative exp-row">
+                    <div class="col-3 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
                     <div class="col-9 exp-heading text-left  ">
-                        <div class="exp-employer"><h5>{{row['employer']}}</h5></div>
-                        <div class="exp-role"><h6>{{row['role']}}</h6></div>  
-                        <div class="exp-description"><p>{{row['description']}}</p> </div>
+                        <div class="exp-employer text-light"><h5>{{row['employer']}}</h5></div>
+                        <div class="exp-role text-secondary"><h6>{{row['role']}}</h6></div>  
+                        <div class="exp-description"><p style="color: #EEEE;">{{row['description']}}</p> </div>
                         
                         <div class="exp-tags">
                             {% for tag in row.tags %}
@@ -48,6 +48,8 @@
     <div class="container text-left form-container">
         <p class="text-center">Add your experience below. List your most relevant experience first.</p>
         <form action="/experience" method="POST" class="row g-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <!-- Start date -->
             <div class="mb-3 col-md-6">
                 <label for="start_date" class="form-label">Start date</label>

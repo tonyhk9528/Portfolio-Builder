@@ -11,6 +11,8 @@
     <div class="container text-left form-container">
         <p class="text-center">Edit your project in the form below.</p>
         <form  method="POST" class="row g-2" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <!-- Project name -->
             <div class="mb-3 col-md-12">
                 <label for="project-name" class="form-label">Project name</label>

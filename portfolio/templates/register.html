@@ -27,6 +27,8 @@
     </div>
     <div class="container text-left form-container">
       <form class="row g-2 needs-validation"  method="POST" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
         <div class="col-md-6">
             <label for="username" class="form-label">Username</label>
             <div class="input-group has-validation">

@@ -32,7 +32,12 @@
 </head>
 
 <body>
+    <div class="port-container d-flex flex-row-reverse">
+            <span><a href="mailto:tsangh4@cardiff.ac.uk" class="contact-btn btn btn-outline-info">Contact me</a></span> 
+            <span><a href="#" class="contact-btn btn btn-outline-info">Resume</a></span> 
+    </div>
     <div class="port-container container-xxl d-flex flex-row">
+
         <!-- Header -->
         <div class="col-4 sticky-header">
             <header class="port-user-info p-3">
@@ -46,24 +51,25 @@
 
                 <nav>
                     <ul class="nav col-12 col-lg-auto me-lg-auto justify-content-center mb-md-0 d-flex flex-column mb-3">
-                        <li><a href="#" class="nav-link px-2 port-nav-link">— About</a></li>
-                        <li><a href="#" class="nav-link px-2 port-nav-link">— Skills</a></li>
-                        <li><a href="#" class="nav-link px-2 port-nav-link">— Experience</a></li>
-                        <li><a href="#" class="nav-link px-2 port-nav-link">— Projects</a></li>
+                        <li><a href="#about" class="nav-link px-2 port-nav-link active">— About</a></li>
+                        <li><a href="#skills" class="nav-link px-2 port-nav-link">— Skills</a></li>
+                        <li><a href="#exp" class="nav-link px-2 port-nav-link">— Experience</a></li>
+                        <li><a href="#proj" class="nav-link px-2 port-nav-link">— Projects</a></li>
                     </ul>
                 </nav>
             </header>
+
         </div>
     
 
         <main class="col-8 port-main">
             <div class="row g-2">
-                <div class="port-about text-light">
+                <section class="port-about text-light" id="about">
                     {{user.about_me|safe}}
-                </div>
+                </section>
 
             {% if user_skills%}
-                <div class="userskills row g-2 text-center port-skills">
+                <section class="userskills row g-2 text-center port-skills" id="skills">
                         {% for row in user_skills%}
                             <div class="col-4 skill-container">
                                 <img class="skill-icon" src="{{url_for('static', filename='img/' + row.skill_icon + '.png')}}">
@@ -71,12 +77,12 @@
                                 <p class="skill-content">{{row.skill_content}}</p>
                             </div>
                         {% endfor %}
-                </div>
+                </section>
             {% endif %}
 
             {%  if user_experience_list %}
 
-            <div class="exp-container port-exp">
+            <section class="exp-container port-exp" id="exp">
                 {% for row in user_experience_list %}
                 <div class="row text-left experience-container">
                     <div class="col-3 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
@@ -97,20 +103,20 @@
                 </div>
                 
 
-                <hr>
                 {% endfor %}
-            </div>
+            </section>
             
             {% endif %}
 
             {% if user_projects%}
+            <section id="proj" class="port-proj">
             {% for project in user_projects %}
-                <div class="project-container">
+                <div class="project-container position-relative">
                         <div class="row text-left">
                             <div class="col-4 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
 
                             <div class="col-8 proj-content text-left">
-                                <div class="proj-name text-light"><a class="project-link" href="{{project.project_url}}"><h5>{{project.project_name}}</h5></a></div>
+                                <div class="proj-name text-light"><a class="project-link stretched-link" href="{{project.project_url}}" target="_blank"><h5>{{project.project_name}}</h5></a></div>
                                 <div class="proj-description"> <p style="color: #EEEE;">{{project.project_description}}</p> </div>
                                 
                                 {% if project.tags %}
@@ -134,7 +140,7 @@
 
 
 
-            </div>
+            </section>
 
             
 
@@ -144,8 +150,8 @@
     </div>
 
     <!--Footer-->
-    <footer class="py-3 my-4">
-        <p class="text-center text-body-secondary">Powered by Portfolio Builder</p>
+    <footer class="py-3 port-footer">
+        <p class="text-center text-secondary">Powered by Portfolio Builder</p>
     </footer>
         
 </body>

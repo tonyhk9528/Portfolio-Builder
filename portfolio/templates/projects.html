@@ -8,19 +8,20 @@
         <div class="container text-left px-3 gy-3">
             {% if user_projects%}
                 {% for project in user_projects %}
-                    <div class="project-container">
-                            <div class="row text-left position-relative">
-                                <div class="col-3 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
+                    <div class="project-container position-relative">
+                            <div class="row text-left ">
+                                <div class="col-4 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
 
-                                <div class="col-9 proj-content text-left  ">
-                                    <div class="proj-name"><a class="project-link" href="{{project.project_url}}"><h5>{{project.project_name}}</h5></a></div>
-                                    <div class="proj-description"> <p>{{project.project_description}}</p> </div>
-                                    
+                                <div class="col-8 proj-content text-left">
+                                    <div class="stretched-link-container">
+                                        <div class="proj-name"><a class="project-link stretched-link" href="{{project.project_url if project.project_url else '#'}}"><h5>{{project.project_name}}</h5></a></div>
+                                        <div class="proj-description position-relative"> <p>{{project.project_description}}</p> </div>
+                                    </div>
                                     {% if project.tags %}
-                                        <div class="exp-tags">
+                                        <div class="exp-tags ">
                                         {% set tags = project.tags.split(',') %}
                                         {% for tag in tags%}
-                                            <button type="button" class="btn btn-outline-secondary tag">{{tag}}</button>
+                                            <button type="button" class="btn btn-outline-secondary tag ">{{tag}}</button>
                                         {% endfor %}
                                         </div>
                                     {% endif %}
@@ -39,12 +40,14 @@
             
 
     </div>
-</div>
+
         
         
     <div class="container text-left form-container">
         <p class="text-center">Add your projects below. List your most relevant project first.</p>
         <form action="/projects" method="POST" class="row g-2" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <!-- Project name -->
             <div class="mb-3 col-md-12">
                 <label for="project-name" class="form-label">Project name</label>

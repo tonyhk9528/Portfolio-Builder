@@ -4,6 +4,19 @@
   padding: 0px 20px;
 }
 
+a{
+  color:#00ADB5;
+  text-decoration: none;
+}
+
+a:hover{
+  color:#00acb57b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 
 main {
   display: -ms-flexbox;
@@ -75,8 +88,8 @@ main {
   margin-top: 16px;
 }
 
-#dashboard-container{
-  max-width: 900px;
+.dashboard-container{
+  max-width: 800px;
 }
 
 .about-container{
@@ -137,18 +150,23 @@ main {
 
 .exp-container{
   max-width: 750px;
+  background-color: #222831;
+  margin: 16px auto;
+}
+
+.exp-row{
   padding: 25px;
   margin: 16px auto;
-  background-color: #222831;
   border-radius: 10px;
 }
 
-.experience-container:hover{
+.exp-row:hover{
   background-color: #2A3139;
 }
 
 .exp-date{
   font-size: smaller;
+
 }
 
 .exp-description{
@@ -167,6 +185,18 @@ main {
 
 .tag{
   font-size: small;
+  font-weight: bold;
+  color: #5eead4;
+  border: 0px solid ;
+  background-color: #4e998f2f;
+  margin:3px 1px;
+}
+
+.tag:hover{
+  color:#5eead4;
+  border: 0px solid;
+  background-color: #4e998f2f;
+
 }
 
 .proj-img{
@@ -196,7 +226,6 @@ main {
 
 .project-link:hover{
   color:#00ADB5;
-  text-decoration: underline;
 }
 
 
@@ -205,7 +234,9 @@ main {
   padding-right: 25px;
 }
 
-
+.proj-description{
+  color:#EEEEEE;
+}
 
 .port-container{
   padding-left: 48px;
@@ -213,6 +244,9 @@ main {
   background-color: #222831;
 }
 
+.contact-btn{
+  margin: 20px 6px;
+}
 
 .port-user-info{
   background-color: #222831;
@@ -222,7 +256,7 @@ main {
 }
 
 .port-name{
-  padding-top: 96px;
+  padding-top: 26px;
 }
 
 .port-role{
@@ -234,28 +268,60 @@ main {
   color:#94A3B8;
 }
 
-.port-role{
-}
-
 
 
 .port-nav-link{
   color:#94A3B8;
 }
 
+.port-nav-link.active{
+  color:#ffff;
+  font-size: larger;
+}
+
+.port-nav-link:hover{
+  color:#ffff;
+  font-size: larger;
+}
+
+
 .port-main{
   background-color: #222831;
+  padding-top: 0;
 }
 
 .port-about{
-  margin-bottom: 96px;
+  padding-top:42px;
 }
 
 .port-skills{
-  margin-bottom: 96px;
+  margin-top: 66px;
+  padding-top: 30px;
 }
 
 .port-exp{
-  margin-bottom: 96px;
+  margin-top: 66px;
+  padding-top: 30px;
+}
+
+.port-proj{
+  margin-top: 66px;
+  padding-top: 30px;
+}
+
+
+
+.experience-container{
+  border-radius: 10px;
+  padding:20px 0;
+}
+.experience-container:hover{
+  background-color: #2A3139;
+}
+
+
+.port-footer{
+  background-color: #393E46;
+  margin: 0px;
 }
 

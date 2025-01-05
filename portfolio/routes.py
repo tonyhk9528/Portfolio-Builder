@@ -64,11 +64,15 @@ def register():
         sql_about = "INSERT INTO about (user_id, about_me) VALUES (:user_id, :about_me)"
         db.session.execute(text(sql_about), {
             "user_id": user_id,                
-            "about_me": "Write a couple-paragraphs-long summary about yourself. It can be about your upbring, passion, past experiences or even hobbies. This is your chance to give a good first impression and showcase your personality!",
-            })
+            "about_me": """
+                Write a couple-paragraphs-long summary about yourself. 
+                It can be about your upbring, passion, past experiences or even hobbies. 
+                This is your chance to give a good first impression and showcase your personality!
+            """
+        })
 
         db.session.commit()
-        flash("Account created successfully!")
+        flash("Account created successfully!", "success")
         return redirect( url_for('login'))
 
     return render_template('register.html')
@@ -96,7 +100,7 @@ def login():
             return redirect(url_for('dashboard'))
         
         else:
-            flash('Invalid credentials. Please try again.', 'error')
+            flash('Invalid credentials. Please try again.', 'danger')
            
     if "user_id" in session:
         return redirect(url_for('dashboard'))
@@ -106,6 +110,10 @@ def login():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    if not session.get("user_id"):
+        flash("Please login first.", 'warning')
+        return redirect(url_for('login'))
+
     user_id = session["user_id"]
 
     if request.method == 'POST':
@@ -137,34 +145,31 @@ def dashboard():
                 }
         )
         db.session.commit()
-        flash("Information updated successfully!")
+        flash("Information updated successfully!", 'sucess')
         return redirect( url_for('dashboard'))
 
 
+    sql = text("SELECT * FROM users WHERE id = :id")
+    user = db.engine.connect().execute(sql, {'id': user_id}).fetchone()
+    return render_template('dashboard.html', user=user)
 
-
-    if "user_id" in session:
-        
-        sql = text("SELECT * FROM users WHERE id = :id")
-        user = db.engine.connect().execute(sql, {'id': user_id}).fetchone()
-        return render_template('dashboard.html', user=user)
-
-    else:
-        return redirect(url_for('login'))
 
 
 @app.route('/logout')
 def logout():
-    session.clear()
-    flash("You have been logged out.")
-    return redirect(url_for('login'))
+    if not session.get("user_id"):
+        return redirect(url_for('login'))
+    else:
+        session.clear()
+        flash("You have been logged out.", "success")
+        return redirect(url_for('login'))
 
 
 
 @app.route('/about', methods = ['GET', 'POST'])
 def about():
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
 
     user_id = session["user_id"]
@@ -197,10 +202,8 @@ def about():
                 }
         )
         db.session.commit()
-        flash("Information updated successfully!")
+        flash("Information updated successfully!", "success")
         return redirect( url_for('about'))
-
-
 
 
     return render_template("about.html", username=username, user_id=user_id, about=about)
@@ -208,8 +211,8 @@ def about():
 
 @app.route('/skills', methods = ['GET', 'POST'])
 def skills():
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
 
     user_id = session["user_id"]
@@ -261,8 +264,8 @@ def skills():
 
 @app.route('/skills/edit/<int:id>', methods = ['GET', 'POST'])
 def edit_skill(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -278,6 +281,7 @@ def edit_skill(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
     if result.user_id != user_id:
+        flash("Invalid permission.", "danger")
         return redirect(url_for('skills'))
 
 
@@ -307,7 +311,7 @@ def edit_skill(id):
                 }
         )
         db.session.commit()
-        flash("Skill updated successfully!")
+        flash("Skill updated successfully!", "success")
         return redirect( url_for('skills'))
 
 
@@ -323,8 +327,8 @@ def edit_skill(id):
 
 @app.route('/skills/delete/<int:id>')
 def delete_skill(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -335,6 +339,7 @@ def delete_skill(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
     if result.user_id != user_id:
+        flash('Invalid permission', 'danger')
         return redirect(url_for('skills'))
 
 
@@ -360,8 +365,8 @@ def delete_skill(id):
 
 @app.route('/experience', methods = ['GET', 'POST'])
 def experience():
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
 
     user_id = session["user_id"]
@@ -430,8 +435,8 @@ def experience():
 
 @app.route('/experience/edit/<int:id>', methods = ['GET', 'POST'])
 def edit_experience(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -442,6 +447,7 @@ def edit_experience(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
     if result.user_id != user_id:
+        flash('Invalid permission', 'danger')
         return redirect(url_for('experience'))
 
 
@@ -477,7 +483,7 @@ def edit_experience(id):
                 }
         )
         db.session.commit()
-        flash("Experience updated successfully!")
+        flash("Experience updated successfully!", "success")
         return redirect( url_for('experience'))
 
 
@@ -492,8 +498,8 @@ def edit_experience(id):
 
 @app.route('/experience/delete/<int:id>')
 def delete_experience(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -504,6 +510,7 @@ def delete_experience(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
     if result.user_id != user_id:
+        flash("Invalid permission", "danger")
         return redirect(url_for('experience'))
 
 
@@ -529,8 +536,8 @@ def delete_experience(id):
 
 @app.route('/projects', methods = ['GET', 'POST'])
 def projects():
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
 
     user_id = session["user_id"]
@@ -594,8 +601,8 @@ def projects():
 
 @app.route('/projects/edit/<int:id>', methods = ['GET', 'POST'])
 def edit_project(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -606,9 +613,10 @@ def edit_project(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
     if result.user_id != user_id:
+        flash("Invalid permission", "danger")
         return redirect(url_for('projects'))
-    project_screenshot = result.project_screenshot
 
+    project_screenshot = result.project_screenshot
 
     if request.method == 'POST':
         new_project_name = request.form.get("project-name")
@@ -655,7 +663,7 @@ def edit_project(id):
                 }
         )
         db.session.commit()
-        flash("Project updated successfully!")
+        flash("Project updated successfully!", "success")
         return redirect( url_for('projects'))
 
 
@@ -667,10 +675,11 @@ def edit_project(id):
     
     return render_template("edit_project.html", user_project=user_project)
 
+
 @app.route('/projects/delete/<int:id>')
 def delete_project(id):
-    if not session["user_id"]:
-        flash("Please login first")
+    if not session.get("user_id"):
+        flash("Please login first", "warning")
         return redirect(url_for('login'))
     
     user_id = session["user_id"]
@@ -681,6 +690,7 @@ def delete_project(id):
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
     if result.user_id != user_id:
+        flash("Invalid permission", "danger")
         return redirect(url_for('projects'))
 
 

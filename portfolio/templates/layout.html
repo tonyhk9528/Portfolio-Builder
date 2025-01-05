@@ -45,7 +45,7 @@
                 <li><a href="{{url_for('skills')}}" class="nav-link px-2 text-white">Skills</a></li>
                 <li><a href="{{url_for('experience')}}" class="nav-link px-2 text-white">Experience</a></li>
                 <li><a href="{{url_for('projects')}}" class="nav-link px-2 text-white">Projects</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Your Portfolio</a></li>
+                <li><a href="{{url_for('portfolio', username=session["username"])}}" class="nav-link px-2 text-white">Your Portfolio</a></li>
               </ul>
 
         

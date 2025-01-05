@@ -21,10 +21,21 @@
 </head>
 
 <body class="text-center">
+
   <main>
+
     <form class="form-signin" method="POST">
+
         <img class="mb-4" src="{{url_for('static',filename='img/resume_icon.png')}}" alt="Portfolio Builder icon" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Sign in to Portfolio Builder</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                <p class="alert alert-{{ category }}">{{ message }}</p>
+              {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required="" autofocus="">
         <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="">
         <div class="checkbox mb-3">

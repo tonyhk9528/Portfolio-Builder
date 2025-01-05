@@ -12,6 +12,8 @@
     <div class="container text-left form-container">
         <p class="text-center">Edit your experience in the form below</p>
         <form method="POST" class="row g-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <!-- Start date -->
             <div class="mb-3 col-md-6">
                 <label for="start_date" class="form-label">Start date</label>

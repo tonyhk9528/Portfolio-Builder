@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 import os
 from datetime import timedelta
 
@@ -11,7 +12,7 @@ app.secret_key = 'thisisasecretkey'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-
+csrf = CSRFProtect(app)
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
