@@ -5,15 +5,23 @@
 
 
 <div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <p class="alert alert-{{ category }}">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
 
-    <div class="about-container">
-        <h1 class="h4 mb-2 fw-normal">About</h1>
+    <h1 class="h4 mb-2 fw-normal text-center">About</h1>
+    <div class="about-container text-light">
         <div class="about-p"><p>{{about|safe}}</p></div>
     </div>
 
     
     <form  id ="aboutform" method="POST" action="/about">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="form-group">
         <label class="form-label">Update your "about" section below</label>
         <div id="editor">{{ about|safe }}</div>
@@ -21,7 +29,7 @@
       </div>
 
       <div class="about-btn">
-        <button class="btn btn-primary" type="submit">Confirm</button>
+        <button class="btn btn-primary" type="submit">Save</button>
       </div>
     </form>
 

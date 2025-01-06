@@ -3,8 +3,16 @@
 
 <div class="container">
 
-    <div class="experience-container">
+    <div>
         <h1 class="h4 mb-2 fw-normal text-center">Experience</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="container text-left px-3 gy-3">
 
             {%  if user_experience_list %}
@@ -12,8 +20,8 @@
             <div class="exp-container">
                 {% for row in user_experience_list %}
                 <div class="row text-left position-relative exp-row">
-                    <div class="col-3 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
-                    <div class="col-9 exp-heading text-left  ">
+                    <div class="col-md-3 col-12 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                    <div class="col-md-9 col-12 exp-heading text-left  ">
                         <div class="exp-employer text-light"><h5>{{row['employer']}}</h5></div>
                         <div class="exp-role text-secondary"><h6>{{row['role']}}</h6></div>  
                         <div class="exp-description"><p style="color: #EEEE;">{{row['description']}}</p> </div>
@@ -25,11 +33,14 @@
                         </div>
 
                         <div class="position-absolute top-0 end-0">
-                            <a href="{{url_for('edit_experience', id=row.experience_id)}}"><span class="edit-delete">Edit</span></a>
-                            <a href="{{url_for('delete_experience', id=row.experience_id)}}"><span class="edit-delete">Delete</span></a>
+                             <a href="{{url_for('edit_experience', id=row.experience_id)}}"><button class="btn btn-success edit-delete">Edit</button></a>
+                            <form action="{{ url_for('delete_experience', id=row.experience_id) }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger edit-delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>                        </div>
+                            </form>
                         </div>
+
     
-                    </div>
                         
                 </div>
                 
@@ -46,7 +57,7 @@
         
         
     <div class="container text-left form-container">
-        <p class="text-center">Add your experience below. List your most relevant experience first.</p>
+        <p class="text-center">Add your experience below. More recent experience will appear first.</p>
         <form action="/experience" method="POST" class="row g-2">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 

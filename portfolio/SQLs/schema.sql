@@ -7,10 +7,7 @@ CREATE TABLE IF NOT EXiSTS"users"(
     "email" TEXT NOT NULL UNIQUE,
     "role" TEXT NOT NULL,
     "headline" TEXT NOT NULL,
-    "profile_pic" TEXT,
-    "resume" TEXT,
-    "linkedin" TEXT,
-    "github" TEXT
+    "resume" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "about"(
@@ -23,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "skills"(
     "skill_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "user_id" INTEGER NOT NULL,
     "skill_name" TEXT NOT NULL,
-    "skill_content" TEXT NOT NULL,
+    "skill_content" TEXT,
     "skill_icon" TEXT NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );

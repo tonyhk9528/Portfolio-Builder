@@ -4,25 +4,35 @@
         <h1 class="text-center">User Dashboard</h1>
         <p class="text-muted text-center">Update your information below. Username and password cannot be changed here.</p>
 
-        <form action="/dashboard" method="POST" class="row g-2 needs-validation" novalidate>
+        <form action="/dashboard" method="POST" class="row g-2 needs-validation" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="alert alert-{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+  
             <!-- Username (read-only) -->
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" id="username" class="form-control" value="{{user.username}}" disabled>
+                <div class="invalid-feedback">This field cannot be empty.</div>
             </div>
 
             <!-- First Name -->
             <div class="col-6 mb-3">
                 <label for="first-name" class="form-label">First Name</label>
                 <input type="text" id="first-name" name="first-name" class="form-control" value="{{user.first_name}}" required>
+                <div class="invalid-feedback">This field cannot be empty.</div>
             </div>
 
             <!-- Last Name -->
             <div class="col-6 mb-3">
                 <label for="last-name" class="form-label">Last Name</label>
                 <input type="text" id="last-name" name="last-name" class="form-control" value="{{user.last_name}}" required>
+                <div class="invalid-feedback">This field cannot be empty.</div>
             </div>
             
             
@@ -31,19 +41,33 @@
             <div class="col-6 mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" id="email" name="email" class="form-control" value="{{user.email}}" required>
+                <div class="invalid-feedback">Please provide a valid email.</div>
             </div>
 
             <!-- Role -->
             <div class="col-6 mb-3">
                 <label for="Role" class="form-label">Current Role or Aspiration</label>
                 <input type="text" id="role" name="role" class="form-control" value="{{user.role}}" required>
+                <div class="invalid-feedback">This field cannot be empty.</div>
             </div>
 
             <!-- Headline -->
             <div class="mb-3">
                 <label for="headline" class="form-label">Headline</label>
                 <input type="text" id="headline" name="headline" class="form-control" value="{{user.headline}}" required>
+                <div class="invalid-feedback">This field cannot be empty.</div>
             </div>
+
+            <!-- Resume -->
+            <div class="mb-3">
+                <label for="resume" class="form-label">Upload your resume (Optional)</label>
+                <input type="file" name="resume" class="form-control"  accept=".pdf">
+                <div class="form-text">
+                    Upload your full resume for readers. File must be pdf.
+                </div>
+
+            </div>
+            
 
             <!-- Submit Button -->
             <div class="d-grid gap-2">

@@ -1,4 +1,4 @@
-//Quill
+//Modified from Quill.js: https://quilljs.com/docs/quickstart
 document.addEventListener("DOMContentLoaded", () => {
   const quill = new Quill('#editor', {
     modules: {
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 });
 
-//Experience
+//Experience current logic
 document.addEventListener("DOMContentLoaded", () =>{
 
   //end date is current  
@@ -67,5 +67,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+});
+
+//Bootstrap form validation
+// Directly form Bootstrap documentation : https://getbootstrap.com/docs/5.0/forms/validation/
+document.addEventListener("DOMContentLoaded", () => {
+  'use strict';
+
+  const forms = document.querySelectorAll('.needs-validation');
+
+  Array.prototype.slice.call(forms).forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      form.classList.add('was-validated');
+    }, false);
+  });
 });
 

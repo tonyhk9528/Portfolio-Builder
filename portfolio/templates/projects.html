@@ -5,16 +5,24 @@
 
     <div class="projects-container">
         <h1 class="h4 mb-2 fw-normal text-center">Projects</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="container text-left px-3 gy-3">
             {% if user_projects%}
                 {% for project in user_projects %}
                     <div class="project-container position-relative">
                             <div class="row text-left ">
-                                <div class="col-4 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
+                                <div class="col-12 col-md-4 pic-container text-left img-fluid"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
 
-                                <div class="col-8 proj-content text-left">
-                                    <div class="stretched-link-container">
-                                        <div class="proj-name"><a class="project-link stretched-link" href="{{project.project_url if project.project_url else '#'}}"><h5>{{project.project_name}}</h5></a></div>
+                                <div class="col-12 col-md-8 proj-content text-left">
+                                    <div class="">
+                                        <div class="proj-name"><a class="project-link" href="{{project.project_url if project.project_url else '#'}}"><h5>{{project.project_name}}</h5></a></div>
                                         <div class="proj-description position-relative"> <p>{{project.project_description}}</p> </div>
                                     </div>
                                     {% if project.tags %}
@@ -27,8 +35,11 @@
                                     {% endif %}
 
                                     <div class="position-absolute top-0 end-0">
-                                        <a href="{{url_for('edit_project', id=project.project_id)}}"><span class="edit-delete">Edit</span></a>
-                                        <a href="{{url_for('delete_project', id=project.project_id)}}"><span class="edit-delete">Delete</span></a>
+                                        <a href="{{url_for('edit_project', id=project.project_id)}}"><button class="btn btn-success edit-delete">Edit</button></a>
+                                        <form action="{{ url_for('delete_project', id=project.project_id) }}" method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-danger edit-delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                        </form>
                                     </div>
                 
                                 </div>
@@ -63,7 +74,7 @@
             <!-- Project screenshot -->
             <div class="mb-3 col-md-12">
                 <label for="project-screenshot" class="form-label">Screenshot (Optional)</label>
-                <input type="file" name="project-screenshot" class="form-control"  accept=".png, .jpg, .jpeg" aria-describedby="screenshothelpblock">
+                <input type="file" name="project-screenshot" class="form-control"  accept="image/*" aria-describedby="screenshothelpblock">
                 <div id="screenshothelpblock" class="form-text">
                     Upload a screenshot for your project. Default image will be used if no image is uploaded.
                 </div>

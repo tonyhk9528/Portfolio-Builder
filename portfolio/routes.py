@@ -2,7 +2,9 @@ from flask import render_template, redirect, url_for, request, flash, session, a
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+import re
 import os
 
 
@@ -19,16 +21,30 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        #validate submission
+        
 
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form.get('username').lower().strip()
+        password = request.form.get('password').strip()
         password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-        first_name = request.form.get('first-name')
-        last_name = request.form.get('last-name')
-        role = request.form.get('role')
-        email = request.form.get('email')
-        headline = request.form.get('headline')
+        first_name = request.form.get('first-name').strip()
+        last_name = request.form.get('last-name').strip()
+        role = request.form.get('role').strip()
+        email = request.form.get('email').strip()
+        headline = request.form.get('headline').strip()
+
+        #validate username, password, and email 
+        if not 3 <= len(username) <= 20:
+            flash("Username must be 3-20 characters long.", "danger")
+            return render_template("register.html")
+
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.", "danger")
+            return render_template("register.html")
+
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            flash("Invalid email address.", "danger")
+            return render_template("register.html")
+        
 
         sql = """
                 INSERT INTO users 
@@ -38,21 +54,28 @@ def register():
             """
         sql_q = text(sql)
 
-        #Add users
-        db.session.execute(
-            sql_q,
-            {
-            "username": username,
-            "password_hash": password_hash,
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "role": role,
-            "headline": headline
-                }
-        )
+        #Catch UNIQUE constraint in db
+        try:
+            #Add users
+            db.session.execute(
+                sql_q,
+                {
+                "username": username,
+                "password_hash": password_hash,
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "role": role,
+                "headline": headline
+                    }
+            )
 
-        db.session.commit()
+            db.session.commit()
+
+        except IntegrityError:
+            db.session.rollback()
+            flash("Registration failed due to unexpected error.", "danger")
+            return render_template('register.html')
 
         #get id
         sql_id = "SELECT id, username, password_hash FROM users WHERE username = :username"
@@ -81,7 +104,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
+        username = request.form.get('username').lower()
         password = request.form.get('password')
         remember_me = request.form.get('remember-me')
 
@@ -122,31 +145,59 @@ def dashboard():
         new_role = request.form.get('role')
         new_email = request.form.get('email')
         new_headline = request.form.get('headline')
+        new_resume = request.files.get("resume")
+
+        #validate email
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', new_email):
+            flash("Invalid email address.", "danger")
+            return redirect(url_for('dashboard'))
+
+        #Get existing resume file name
+        sql = "SELECT resume FROM users WHERE id = :id"
+        sql_q = text(sql)
+        result = db.engine.connect().execute(sql_q, {'id':user_id}).fetchone()
+        resume = result.resume
+
+        if new_resume:
+            #Save file
+            new_resume_filename = f"{user_id}_{secure_filename(new_resume.filename)}" 
+            new_resume.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', new_resume_filename))
+
+        else:
+            new_resume_filename = resume
+
         
 
         sql = """
                 UPDATE users 
                 SET  
-                first_name= :first_name, last_name = :last_name, email = :email, role = :role, headline = :headline
+                first_name= :first_name, last_name = :last_name, email = :email, role = :role, headline = :headline, resume = :resume
                 WHERE id = :id
             """
         sql_q = text(sql)
 
         #Update users
-        db.session.execute(
-            sql_q,
-            {
-            "first_name": new_first_name,
-            "last_name": new_last_name,
-            "email": new_email,
-            "role": new_role,
-            "headline": new_headline,
-            "id": user_id
-                }
-        )
-        db.session.commit()
-        flash("Information updated successfully!", 'sucess')
-        return redirect( url_for('dashboard'))
+        try:
+            db.session.execute(
+                sql_q,
+                {
+                "first_name": new_first_name,
+                "last_name": new_last_name,
+                "email": new_email,
+                "role": new_role,
+                "headline": new_headline,
+                "resume": new_resume_filename,
+                "id": user_id
+                    }
+            )
+            db.session.commit()
+            flash("Information updated successfully!", 'success')
+            return redirect( url_for('dashboard'))
+
+        except IntegrityError:
+            db.session.rollback()
+            flash("Update failed due to unexpected error.", 'danger')
+
 
 
     sql = text("SELECT * FROM users WHERE id = :id")
@@ -202,7 +253,7 @@ def about():
                 }
         )
         db.session.commit()
-        flash("Information updated successfully!", "success")
+        flash("About updated successfully!", "success")
         return redirect( url_for('about'))
 
 
@@ -228,9 +279,16 @@ def skills():
         skill_content = request.form.get("skill_content")
         skill_icon = request.form.get("skill_icon")
 
+        #Ensure name is not null
+        if skill_name == "":
+            flash("Please enter skill name", "danger")
+            return redirect( url_for('skills'))
+
+
         #validate skill_icon
         if skill_icon not in icons:
-            return render_template("skills.html", icons=icons)
+            flash("Unsupported icon submitted", "danger")
+            return redirect( url_for('skills'))
 
         sql = """
                 INSERT INTO skills 
@@ -283,12 +341,24 @@ def edit_skill(id):
     if result.user_id != user_id:
         flash("Invalid permission.", "danger")
         return redirect(url_for('skills'))
-
+    
 
     if request.method == 'POST':
         new_skill_name = request.form.get('skill_name')
         new_skill_icon = request.form.get('skill_icon')
         new_skill_content = request.form.get('skill_content')
+    
+        #Ensure name is not null
+        if new_skill_name == "":
+            flash("Please enter skill name", "danger")
+            return redirect(url_for('skills'))
+
+
+        #validate skill_icon
+        if new_skill_icon not in icons:
+            flash("Unsupported icon submitted", "danger")
+            return redirect(url_for('skills'))
+
         
 
         sql = """
@@ -298,6 +368,7 @@ def edit_skill(id):
                 WHERE user_id = :user_id AND skill_id = :skill_id
             """
         sql_q = text(sql)
+
 
         #Update skill
         db.session.execute(
@@ -325,42 +396,43 @@ def edit_skill(id):
 
 
 
-@app.route('/skills/delete/<int:id>')
+@app.route('/skills/delete/<int:id>', methods = ['POST'])
 def delete_skill(id):
-    if not session.get("user_id"):
-        flash("Please login first", "warning")
-        return redirect(url_for('login'))
-    
-    user_id = session["user_id"]
-    username = session["username"]
+    if request.method == 'POST':
+        if not session.get("user_id"):
+            flash("Please login first", "warning")
+            return redirect(url_for('login'))
+        
+        user_id = session["user_id"]
+        username = session["username"]
 
-    #validate ownership
-    sql_validate = "SELECT user_id FROM skills WHERE skill_id = :skill_id"
-    sql_validate_q = text(sql_validate)
-    result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
-    if result.user_id != user_id:
-        flash('Invalid permission', 'danger')
+        #validate ownership
+        sql_validate = "SELECT user_id FROM skills WHERE skill_id = :skill_id"
+        sql_validate_q = text(sql_validate)
+        result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
+        if result.user_id != user_id:
+            flash('Invalid permission', 'danger')
+            return redirect(url_for('skills'))
+
+
+        #Delete skill
+        sql = """
+                DELETE FROM skills 
+                WHERE user_id = :user_id AND skill_id = :skill_id
+            """
+        sql_q = text(sql)
+
+        
+        db.session.execute(
+            sql_q,
+            {
+            "user_id": user_id,
+            "skill_id": id
+                }
+        )
+
+        db.session.commit()
         return redirect(url_for('skills'))
-
-
-    #Delete skill
-    sql = """
-            DELETE FROM skills 
-            WHERE user_id = :user_id AND skill_id = :skill_id
-        """
-    sql_q = text(sql)
-
-    
-    db.session.execute(
-        sql_q,
-        {
-        "user_id": user_id,
-        "skill_id": id
-            }
-    )
-
-    db.session.commit()
-    return redirect(url_for('skills'))
 
 
 @app.route('/experience', methods = ['GET', 'POST'])
@@ -380,6 +452,20 @@ def experience():
         description = request.form.get('description')
         tags = request.form.get('exp-tag')
 
+        #validate input
+        if not start_date or not end_date or not employer or not role or not description:
+            flash("Updated failed due to empty field detected.", "danger")
+            return redirect(url_for('experience'))
+
+        if not re.match(r'^[0-9]{4}-[0-9]{2}$', start_date):
+            flash("Invalid start date.", "danger")
+            return redirect(url_for('experience'))
+        
+        if not re.match(r'^[0-9]{4}-[0-9]{2}$', end_date) and end_date != 'CURRENT':
+            flash("Invalid end date.", "danger")
+            return redirect(url_for('experience'))
+
+        
         sql = """
                 INSERT INTO experience 
                 (user_id, start_date, end_date, employer, role, description, tags) 
@@ -406,7 +492,7 @@ def experience():
         return redirect(url_for('experience'))
 
 
-    sql = "SELECT * FROM experience WHERE user_id = :user_id"
+    sql = "SELECT * FROM experience WHERE user_id = :user_id ORDER BY end_date DESC, start_date DESC"
     sql = text(sql)
     result = db.engine.connect().execute(sql, {'user_id': user_id}).fetchall()
 
@@ -496,42 +582,43 @@ def edit_experience(id):
     return render_template("edit_experience.html", user_experience=user_experience)
 
 
-@app.route('/experience/delete/<int:id>')
+@app.route('/experience/delete/<int:id>', methods=['POST'])
 def delete_experience(id):
-    if not session.get("user_id"):
-        flash("Please login first", "warning")
-        return redirect(url_for('login'))
-    
-    user_id = session["user_id"]
-    username = session["username"]
+    if request.method == 'POST':
+        if not session.get("user_id"):
+            flash("Please login first", "warning")
+            return redirect(url_for('login'))
+        
+        user_id = session["user_id"]
+        username = session["username"]
 
-    #validate ownership
-    sql_validate = "SELECT user_id FROM experience WHERE experience_id = :experience_id"
-    sql_validate_q = text(sql_validate)
-    result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
-    if result.user_id != user_id:
-        flash("Invalid permission", "danger")
+        #validate ownership
+        sql_validate = "SELECT user_id FROM experience WHERE experience_id = :experience_id"
+        sql_validate_q = text(sql_validate)
+        result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
+        if result.user_id != user_id:
+            flash("Invalid permission", "danger")
+            return redirect(url_for('experience'))
+
+
+        #Delete skill
+        sql = """
+                DELETE FROM experience 
+                WHERE user_id = :user_id AND experience_id = :experience_id
+            """
+        sql_q = text(sql)
+
+        
+        db.session.execute(
+            sql_q,
+            {
+            "user_id": user_id,
+            "experience_id": id
+                }
+        )
+
+        db.session.commit()
         return redirect(url_for('experience'))
-
-
-    #Delete skill
-    sql = """
-            DELETE FROM experience 
-            WHERE user_id = :user_id AND experience_id = :experience_id
-        """
-    sql_q = text(sql)
-
-    
-    db.session.execute(
-        sql_q,
-        {
-        "user_id": user_id,
-        "experience_id": id
-            }
-    )
-
-    db.session.commit()
-    return redirect(url_for('experience'))
 
 
 @app.route('/projects', methods = ['GET', 'POST'])
@@ -551,12 +638,18 @@ def projects():
         project_tags = request.form.get("project-tags")
         project_order = request.form.get("project-order")
 
+        #validate input
+        if not project_name or not project_description:
+            flash("Update failed due to empty field detected", "danger")
+            return redirect(url_for('projects'))
+
+
+
         if project_screenshot:
             #Save file
-            project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', secure_filename(project_screenshot.filename)))
+            project_screenshot_filename = f"{str(user_id)}_{secure_filename(project_screenshot.filename)}"
+            project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', project_screenshot_filename))
 
-            #Get file name
-            project_screenshot_filename = project_screenshot.filename
         else:
             project_screenshot_filename = "project-placeholder.jpg"
 
@@ -628,10 +721,9 @@ def edit_project(id):
 
         if new_project_screenshot:
             #Save file
-            new_project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', secure_filename(new_project_screenshot.filename)))
+            new_project_screenshot_filename = f"{str(user_id)}_{secure_filename(new_project_screenshot.filename)}"
+            new_project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', new_project_screenshot_filename))
 
-            #Get file name
-            new_project_screenshot_filename = new_project_screenshot.filename
         else:
             new_project_screenshot_filename = project_screenshot
 
@@ -676,42 +768,43 @@ def edit_project(id):
     return render_template("edit_project.html", user_project=user_project)
 
 
-@app.route('/projects/delete/<int:id>')
+@app.route('/projects/delete/<int:id>', methods = ['POST'])
 def delete_project(id):
-    if not session.get("user_id"):
-        flash("Please login first", "warning")
-        return redirect(url_for('login'))
-    
-    user_id = session["user_id"]
-    username = session["username"]
+    if request.method == 'POST':
+        if not session.get("user_id"):
+            flash("Please login first", "warning")
+            return redirect(url_for('login'))
+        
+        user_id = session["user_id"]
+        username = session["username"]
 
-    #validate ownership
-    sql_validate = "SELECT user_id FROM projects WHERE project_id = :project_id"
-    sql_validate_q = text(sql_validate)
-    result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
-    if result.user_id != user_id:
-        flash("Invalid permission", "danger")
+        #validate ownership
+        sql_validate = "SELECT user_id FROM projects WHERE project_id = :project_id"
+        sql_validate_q = text(sql_validate)
+        result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
+        if result.user_id != user_id:
+            flash("Invalid permission", "danger")
+            return redirect(url_for('projects'))
+
+
+        #Delete skill
+        sql = """
+                DELETE FROM projects 
+                WHERE user_id = :user_id AND project_id = :project_id
+            """
+        sql_q = text(sql)
+
+        
+        db.session.execute(
+            sql_q,
+            {
+            "user_id": user_id,
+            "project_id": id
+                }
+        )
+
+        db.session.commit()
         return redirect(url_for('projects'))
-
-
-    #Delete skill
-    sql = """
-            DELETE FROM projects 
-            WHERE user_id = :user_id AND project_id = :project_id
-        """
-    sql_q = text(sql)
-
-    
-    db.session.execute(
-        sql_q,
-        {
-        "user_id": user_id,
-        "project_id": id
-            }
-    )
-
-    db.session.commit()
-    return redirect(url_for('projects'))
 
 
 @app.route('/portfolio/<username>')
