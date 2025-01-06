@@ -816,6 +816,7 @@ def portfolio(username):
     with db.engine.connect() as connection:
         user = connection.execute(sql_q, {'username': username}).fetchone()
 
+    #incorrect path name handling
     if not user:
         abort(404, description="User not found")
 

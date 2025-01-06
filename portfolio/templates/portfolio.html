@@ -33,13 +33,15 @@
 
 <body>
     <div class="port-container d-flex flex-row-reverse">
-            <span><a href="mailto:tsangh4@cardiff.ac.uk" class="contact-btn btn btn-outline-info">Contact me</a></span> 
-            <span><a href="#" class="contact-btn btn btn-outline-info">Resume</a></span> 
+            <span><a href="mailto:{{user.email}}" class="contact-btn btn">Contact me</a></span>
+            {% if user.resume %} 
+                <span><a href="{{url_for('static',filename='uploads/' + user.resume)}}" class="contact-btn btn" target="_blank">Resume</a></span> 
+            {% endif %}
     </div>
-    <div class="port-container container-xxl d-flex flex-row">
+    <div class="port-container container-xxl d-flex flex-md-row flex-column">
 
         <!-- Header -->
-        <div class="col-4 sticky-header">
+        <div class="col-md-4 col-12 sticky-header">
             <header class="port-user-info p-3">
                 <div class="port-intro">
                     <h1 class="port-name text-white">{{user.first_name}} {{user.last_name}}</h1>
@@ -49,8 +51,8 @@
                     </p>
                 </div>
 
-                <nav>
-                    <ul class="nav col-12 col-lg-auto me-lg-auto justify-content-center mb-md-0 d-flex flex-column mb-3">
+                <nav class="port-nav">
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-md-0 d-flex flex-row flex-md-column mb-3">
                         <li><a href="#about" class="nav-link px-2 port-nav-link active">— About</a></li>
                         <li><a href="#skills" class="nav-link px-2 port-nav-link">— Skills</a></li>
                         <li><a href="#exp" class="nav-link px-2 port-nav-link">— Experience</a></li>
@@ -62,7 +64,7 @@
         </div>
     
 
-        <main class="col-8 port-main">
+        <main class="col-md-8 col-12 port-main">
             <div class="row g-2">
                 <section class="port-about text-light" id="about">
                     {{user.about_me|safe}}
@@ -71,7 +73,7 @@
             {% if user_skills%}
                 <section class="userskills row g-2 text-center port-skills" id="skills">
                         {% for row in user_skills%}
-                            <div class="col-4 skill-container">
+                            <div class="col-md-4 col-12 skill-container">
                                 <img class="skill-icon" src="{{url_for('static', filename='img/' + row.skill_icon + '.png')}}">
                                 <p class="skill-name">{{row.skill_name}}</p>
                                 <p class="skill-content">{{row.skill_content}}</p>
@@ -85,8 +87,8 @@
             <section class="exp-container port-exp" id="exp">
                 {% for row in user_experience_list %}
                 <div class="row text-left experience-container">
-                    <div class="col-3 date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
-                    <div class="col-9 exp-heading text-left ">
+                    <div class="col-md-3 col-12  date-container text-left text-secondary"><span class="exp-date">{{row['start_date_formatted']}} — {{row['end_date_formatted']}}</span></div>
+                    <div class="col-md-9 col-12 exp-heading text-left ">
                         <div class="exp-employer text-light"><h5>{{row['employer']}}</h5></div>
                         <div class="exp-role text-secondary"><h6>{{row['role']}}</h6></div>  
                         <div class="exp-description"><p style="color: #EEEE;">{{row['description']}}</p> </div>
@@ -113,9 +115,9 @@
             {% for project in user_projects %}
                 <div class="project-container position-relative">
                         <div class="row text-left">
-                            <div class="col-4 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
+                            <div class="col-md-4 col-12 pic-container text-left"><img class="proj-img rounded border border-dark-subtle" src="{{url_for('static',filename='uploads/' + project.project_screenshot)}}"></div>
 
-                            <div class="col-8 proj-content text-left">
+                            <div class="col-md-8 col-12 proj-content text-left">
                                 <div class="proj-name text-light"><a class="project-link stretched-link" href="{{project.project_url}}" target="_blank"><h5>{{project.project_name}}</h5></a></div>
                                 <div class="proj-description"> <p style="color: #EEEE;">{{project.project_description}}</p> </div>
                                 

@@ -206,7 +206,6 @@ main {
 
 @media (max-width: 800px) {
   .proj-img{
-    width: 220px;
     margin-bottom: 12px;
   }
 }
@@ -252,6 +251,16 @@ main {
 
 .contact-btn{
   margin: 20px 6px;
+  border-color: #00ADB5;
+  border-radius: 0px;
+  border-width: 2px;
+  color:#00ADB5;
+  font-weight: bold;
+}
+
+.contact-btn:hover{
+  background-color: #00ADB5;
+  color: #fff;
 }
 
 .port-user-info{
@@ -331,3 +340,28 @@ main {
   margin: 0px;
 }
 
+@media (max-width: 800px){
+  .port-user-info{
+    height: 70vh;
+  }
+  
+  .port-about{
+    padding-top: 12px;
+  }
+  
+  .port-skills{
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  
+  .port-exp{
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  
+  .port-proj{
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  
+}
