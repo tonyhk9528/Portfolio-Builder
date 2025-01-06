@@ -1,6 +1,7 @@
 blinker==1.8.2
 click==8.1.7
 Flask==3.0.3
+Gunicorn
 Flask-SQLAlchemy==3.1.1
 Flask-wtf==1.2.1
 itsdangerous==2.2.0

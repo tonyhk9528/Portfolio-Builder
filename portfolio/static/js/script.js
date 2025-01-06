@@ -1,4 +1,6 @@
-//Modified from Quill.js: https://quilljs.com/docs/quickstart
+// Code for initialising quill rich text editor
+// accessed 28-12-2024
+// modified from Quill.js: https://quilljs.com/playground/snow
 document.addEventListener("DOMContentLoaded", () => {
   const quill = new Quill('#editor', {
     modules: {
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //Experience current logic
 document.addEventListener("DOMContentLoaded", () =>{
 
-  //end date is current  
+  //When end date is current  
   document.getElementById('check-current').addEventListener('change', function() {
     const endDateInput = document.querySelector('input[name="end_date"]');
     if (this.checked) {
@@ -69,8 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-//Bootstrap form validation
-// Directly form Bootstrap documentation : https://getbootstrap.com/docs/5.0/forms/validation/
+// Bootstrap form validation
+// taken form Bootstrap documentation
+// access 05-01-2025
+// https://getbootstrap.com/docs/5.0/forms/validation/
 document.addEventListener("DOMContentLoaded", () => {
   'use strict';
 

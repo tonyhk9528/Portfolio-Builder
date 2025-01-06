@@ -1,11 +1,12 @@
+from datetime import datetime
+import re
+import os
+
 from flask import render_template, redirect, url_for, request, flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime
-import re
-import os
 
 
 from portfolio import app, db
@@ -41,7 +42,12 @@ def register():
             flash("Password must be at least 8 characters long.", "danger")
             return render_template("register.html")
 
-        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        #Regex to check for email
+        #taken from regex.com
+        #accessed 05-01-2025
+        #https://regexr.com/3e48o
+        #removed 4 at the last constraint to allow flexibility
+        if not re.match(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$', email):
             flash("Invalid email address.", "danger")
             return render_template("register.html")
         
@@ -148,7 +154,7 @@ def dashboard():
         new_resume = request.files.get("resume")
 
         #validate email
-        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', new_email):
+        if not re.match(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$', new_email):
             flash("Invalid email address.", "danger")
             return redirect(url_for('dashboard'))
 
@@ -457,11 +463,11 @@ def experience():
             flash("Updated failed due to empty field detected.", "danger")
             return redirect(url_for('experience'))
 
-        if not re.match(r'^[0-9]{4}-[0-9]{2}$', start_date):
+        if not re.match(r'^([0-9]{4})-(1[0-2]|0[1-9])$', start_date):
             flash("Invalid start date.", "danger")
             return redirect(url_for('experience'))
         
-        if not re.match(r'^[0-9]{4}-[0-9]{2}$', end_date) and end_date != 'CURRENT':
+        if not re.match(r'^([0-9]{4})-(1[0-2]|0[1-9])$', end_date) and end_date != 'CURRENT':
             flash("Invalid end date.", "danger")
             return redirect(url_for('experience'))
 
