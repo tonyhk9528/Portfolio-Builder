@@ -33,11 +33,15 @@ main {
   background-color: #f2f4f7;
 }
 
+.login-container{
+  height: 100vh;
+}
+
 .form-signin {
   width: 100%;
   max-width: 400px;
   padding: 15px;
-  margin: 0 auto;
+  margin: 0px auto;
 }
 .form-signin .checkbox {
   font-weight: 400;
@@ -71,6 +75,13 @@ main {
   padding: 16px;
   position: relative;
   width: 600px;
+}
+
+@media (max-width: 800px){
+  .form-text{
+    font-size:small;
+    display:none;
+  }
 }
 
 

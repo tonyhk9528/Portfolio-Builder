@@ -52,8 +52,10 @@
             <div class="text-end">
               <span class="px-2 text-white">{{username}}</span>
               <a href="{{url_for('dashboard')}}"><button type="button" class="btn btn-outline-light me-2">Dashboard</button></a>
-              <a href="{{url_for('logout')}}"><button type="button" class="btn btn-warning">Logout</button></a>
-              
+              <form action="{{ url_for('logout')}}" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-warning">Logout</button>
+              </form>
             </div>
           </div>
         </div>

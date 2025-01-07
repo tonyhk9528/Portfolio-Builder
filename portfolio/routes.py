@@ -12,7 +12,15 @@ from sqlalchemy.exc import IntegrityError
 from portfolio import app, db
 from portfolio.models import *
 
+# Banned passwords list 
+# The National Cyber Security Centre
+# Accessed 06-01-2025
+# https://www.ncsc.gov.uk/static-assets/documents/PwnedPasswordsTop100k.txt
+basedir = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(basedir, 'static/PwnedPasswordsTop100k.txt'), encoding='utf-8') as fin:
+    banned_passwords = set(line.strip() for line in fin)
 
+ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
 
 @app.route('/')
 def home():
@@ -23,9 +31,8 @@ def home():
 def register():
     if request.method == 'POST':
         
-
         username = request.form.get('username').lower().strip()
-        password = request.form.get('password').strip()
+        password = request.form.get('password')
         password_hash = generate_password_hash(password, method='pbkdf2:sha256')
         first_name = request.form.get('first-name').strip()
         last_name = request.form.get('last-name').strip()
@@ -41,13 +48,22 @@ def register():
         if len(password) < 8:
             flash("Password must be at least 8 characters long.", "danger")
             return render_template("register.html")
+                
+        if password in banned_passwords:
+            flash("Please pick a stronger password.", "danger")
+            return render_template("register.html")
+        
+        #validate null input
+        if not username or not password or not first_name or not last_name or not role or not email or not headline:
+            flash("Registration failed due to empty field.", "danger")
+            return render_template("register.html")
+
 
         #Regex to check for email
-        #taken from regex.com
+        #taken from StackOverflow
         #accessed 05-01-2025
-        #https://regexr.com/3e48o
-        #removed 4 at the last constraint to allow flexibility
-        if not re.match(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$', email):
+        #https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
             flash("Invalid email address.", "danger")
             return render_template("register.html")
         
@@ -110,7 +126,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username').lower()
+        username = request.form.get('username').lower().strip()
         password = request.form.get('password')
         remember_me = request.form.get('remember-me')
 
@@ -153,8 +169,13 @@ def dashboard():
         new_headline = request.form.get('headline')
         new_resume = request.files.get("resume")
 
+        #validate null input
+        if not new_first_name or not new_last_name or not new_role or not new_email or not new_headline:
+            flash("Update failed due to empty field(s).", "danger")
+            return redirect(url_for('dashboard'))
+
         #validate email
-        if not re.match(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$', new_email):
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", new_email):
             flash("Invalid email address.", "danger")
             return redirect(url_for('dashboard'))
 
@@ -165,6 +186,12 @@ def dashboard():
         resume = result.resume
 
         if new_resume:
+            #validate file type
+            if new_resume.filename[-4:].strip().lower() != '.pdf':
+                flash("Please upload your resume in pdf format.", "danger")
+                return redirect(url_for('dashboard'))
+
+
             #Save file
             new_resume_filename = f"{user_id}_{secure_filename(new_resume.filename)}" 
             new_resume.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', new_resume_filename))
@@ -212,14 +239,15 @@ def dashboard():
 
 
 
-@app.route('/logout')
+@app.route('/logout', methods = ['POST'])
 def logout():
-    if not session.get("user_id"):
-        return redirect(url_for('login'))
-    else:
-        session.clear()
-        flash("You have been logged out.", "success")
-        return redirect(url_for('login'))
+    if request.method == 'POST':
+        if not session.get("user_id"):
+            return redirect(url_for('login'))
+        else:
+            session.clear()
+            flash("You have been logged out.", "success")
+            return redirect(url_for('login'))
 
 
 
@@ -286,7 +314,7 @@ def skills():
         skill_icon = request.form.get("skill_icon")
 
         #Ensure name is not null
-        if skill_name == "":
+        if not skill_name:
             flash("Please enter skill name", "danger")
             return redirect( url_for('skills'))
 
@@ -344,6 +372,11 @@ def edit_skill(id):
     sql_validate = "SELECT user_id FROM skills WHERE skill_id = :skill_id"
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'skill_id':id}).fetchone()
+    if not result:
+        abort(404, description="Item not found.")
+        return redirect(url_for('skills'))
+
+
     if result.user_id != user_id:
         flash("Invalid permission.", "danger")
         return redirect(url_for('skills'))
@@ -355,7 +388,7 @@ def edit_skill(id):
         new_skill_content = request.form.get('skill_content')
     
         #Ensure name is not null
-        if new_skill_name == "":
+        if not new_skill_name:
             flash("Please enter skill name", "danger")
             return redirect(url_for('skills'))
 
@@ -396,6 +429,7 @@ def edit_skill(id):
     sql = "SELECT * FROM skills WHERE user_id = :user_id AND skill_id = :skill_id"
     sql_q = text(sql)
     user_skill = db.engine.connect().execute(sql_q, {'user_id':user_id, 'skill_id':id}).fetchone()
+
 
     
     return render_template("edit_skill.html", user_skill=user_skill, icons=icons)
@@ -460,7 +494,7 @@ def experience():
 
         #validate input
         if not start_date or not end_date or not employer or not role or not description:
-            flash("Updated failed due to empty field detected.", "danger")
+            flash("Updated failed due to empty field(s).", "danger")
             return redirect(url_for('experience'))
 
         if not re.match(r'^([0-9]{4})-(1[0-2]|0[1-9])$', start_date):
@@ -538,6 +572,10 @@ def edit_experience(id):
     sql_validate = "SELECT user_id FROM experience WHERE experience_id = :experience_id"
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'experience_id':id}).fetchone()
+    if not result:
+        abort(404, description="Item not found.")
+        return redirect(url_for('experience'))
+
     if result.user_id != user_id:
         flash('Invalid permission', 'danger')
         return redirect(url_for('experience'))
@@ -550,6 +588,21 @@ def edit_experience(id):
         new_role = request.form.get('role')
         new_description = request.form.get('description')
         new_tags = request.form.get('exp-tag')
+
+        #validate input
+        if not new_start_date or not new_end_date or not new_employer or not new_role or not new_description:
+            flash("Updated failed due to empty field detected.", "danger")
+            return redirect(url_for('experience'))
+
+        if not re.match(r'^([0-9]{4})-(1[0-2]|0[1-9])$', new_start_date):
+            flash("Invalid start date.", "danger")
+            return redirect(url_for('experience'))
+        
+        if not re.match(r'^([0-9]{4})-(1[0-2]|0[1-9])$', new_end_date) and new_end_date != 'CURRENT':
+            flash("Invalid end date.", "danger")
+            return redirect(url_for('experience'))
+
+
         
 
         sql = """
@@ -646,12 +699,15 @@ def projects():
 
         #validate input
         if not project_name or not project_description:
-            flash("Update failed due to empty field detected", "danger")
+            flash("Update failed due to empty field(s) detected.", "danger")
             return redirect(url_for('projects'))
 
-
-
         if project_screenshot:
+            #validate file type
+            if project_screenshot.filename[-4:].strip().lower() not in ALLOWED_EXTENSIONS and project_screenshot.filename[-5:].strip().lower() not in ALLOWED_EXTENSIONS:
+                flash("Update failed due to unsupported image type.", "danger")
+                return redirect(url_for('projects'))
+
             #Save file
             project_screenshot_filename = f"{str(user_id)}_{secure_filename(project_screenshot.filename)}"
             project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', project_screenshot_filename))
@@ -711,6 +767,10 @@ def edit_project(id):
     sql_validate = "SELECT user_id, project_screenshot FROM projects WHERE project_id = :project_id"
     sql_validate_q = text(sql_validate)
     result = db.engine.connect().execute(sql_validate_q, {'project_id':id}).fetchone()
+    if not result:
+        abort(404, description="Item not found.")
+        return redirect(url_for('projects'))
+
     if result.user_id != user_id:
         flash("Invalid permission", "danger")
         return redirect(url_for('projects'))
@@ -725,7 +785,18 @@ def edit_project(id):
         new_project_tags = request.form.get("project-tags")
         new_project_order = request.form.get("project-order")
 
+        #validate input
+        if not new_project_name or not new_project_description:
+            flash("Update failed due to empty field(s) detected.", "danger")
+            return redirect(url_for('projects'))
+
+
         if new_project_screenshot:
+            #Validate file type:
+            if new_project_screenshot.filename[-4:].strip().lower() not in ALLOWED_EXTENSIONS and new_project_screenshot.filename[-5:].strip().lower() not in ALLOWED_EXTENSIONS:
+                flash("Update failed due to unsupported image type.", "danger")
+                return redirect(url_for('projects'))
+
             #Save file
             new_project_screenshot_filename = f"{str(user_id)}_{secure_filename(new_project_screenshot.filename)}"
             new_project_screenshot.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads', new_project_screenshot_filename))
@@ -858,8 +929,6 @@ def portfolio(username):
         ]    
     else:
         user_experience_list = None
-
-
 
 
     #Get projects

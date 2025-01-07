@@ -11,8 +11,8 @@ app = Flask(__name__, static_folder="static")
 app.secret_key = 'thisisasecretkey'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
-ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 csrf = CSRFProtect(app)
+
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
