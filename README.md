@@ -14,14 +14,17 @@ This is an app for users to effortlessly build their personal digital portfolios
 
 
 ## Usage
-
+Application can be seperate to two part: Portfolio Builder and the portfolio itself.
+Only users can access the builder and each user has one portfolio, which is open to public.
+Login and registration can be done in respective path.
+Once logged in, users can go through each section in the buidler and input the information and files they want to display in their portfolio.
 
 ## Support
-Email tsangh4@cardiff.ac.uk for support.
+Email tsangh4@cardiff.ac.uk for support and questions.
 
 
 ## URL on OpenShift
-
+https://portfolio-builder-24039638-port.apps.containers.cs.cf.ac.uk/
 
 ## References
 1. StackOverflow email validation regular expression. [Code]. Available at: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression [Accessed: 05 January 2025].
