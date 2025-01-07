@@ -20,10 +20,10 @@ This is an app for users to effortlessly build their personal digital portfolios
 Email tsangh4@cardiff.ac.uk for support.
 
 
-##URL on OpenShift
+## URL on OpenShift
 
 
-##References
+## References
 1. StackOverflow email validation regular expression. [Code]. Available at: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression [Accessed: 05 January 2025].
 2. Quill.js. Code for initialising quill rich text editor. [Code].  Available at: https://quilljs.com/playground/snow [Accessed: 28 December 2025].
 3. Bootstrap.  JavaScript for form validation. [Code]. Available at: https://getbootstrap.com/docs/5.0/forms/validation/ [Accessed: 05 January 2025]
