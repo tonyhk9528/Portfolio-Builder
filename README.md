@@ -10,7 +10,7 @@ This is an app for users to effortlessly build their personal digital portfolios
 
 
 ## Visual
-![Screenshot of the App](static/img/Screenshot.png)
+![Screenshot of the App](portfolio/static/img/Screenshot.png)
 
 
 ## Usage
