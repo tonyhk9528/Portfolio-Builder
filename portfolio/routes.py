@@ -10,7 +10,6 @@ from sqlalchemy.exc import IntegrityError
 
 
 from portfolio import app, db
-from portfolio.models import *
 
 # Banned passwords list 
 # The National Cyber Security Centre
