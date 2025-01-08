@@ -48,3 +48,4 @@ CREATE TABLE IF NOT EXISTS "projects"(
     "sort_order" INTEGER NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );
+

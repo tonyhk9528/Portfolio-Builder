@@ -48,8 +48,8 @@ def register():
             flash("Password must be at least 8 characters long.", "danger")
             return render_template("register.html")
                 
-        if password in banned_passwords:
-            flash("Please pick a stronger password.", "danger")
+        if password in banned_passwords or password == username:
+            flash("Please pick a less common password.", "danger")
             return render_template("register.html")
         
         #validate null input

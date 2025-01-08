@@ -8,7 +8,7 @@ from sqlalchemy.orm import declarative_base
 
 
 app = Flask(__name__, static_folder="static")
-app.secret_key = 'thisisasecretkey'
+app.secret_key = '5p283xcecw1c' #random string gnerated using https://www.random.org/strings/
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 csrf = CSRFProtect(app)
