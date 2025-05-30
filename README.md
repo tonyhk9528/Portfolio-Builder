@@ -23,11 +23,11 @@ Once logged in, users can go through each section in the buidler and input the i
 Email tsangh4@cardiff.ac.uk for support and questions.
 
 
-## URL on OpenShift
-https://portfolio-builder-24039638-port.apps.containers.cs.cf.ac.uk/
+## URL 
+https://port-builder-71f14b9b0998.herokuapp.com/
 
-## URL of my persoanl portfolio on OpenShift
-https://portfolio-builder-24039638-port.apps.containers.cs.cf.ac.uk/portfolio/tony9528
+## URL of my persoanl portfolio 
+https://port-builder-71f14b9b0998.herokuapp.com/portfolio/tony9528
 
 ## References
 1. StackOverflow email validation regular expression. [Code]. Available at: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression [Accessed: 05 January 2025].
