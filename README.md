@@ -1,6 +1,3 @@
-# c24039638_cmt120_cw2 
-# Username: c24039638
-
 ## Name
 Portfolio Builder
 
